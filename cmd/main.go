@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler"
@@ -14,6 +15,9 @@ import (
 )
 
 func main() {
+
+	// Initialize timezone
+	initTimeZone()
 
 	// Initialize database connection
 	err := database.InitializeDB()
@@ -47,4 +51,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
+}
+
+func initTimeZone() {
+	ict, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		panic(err)
+	}
+
+	time.Local = ict
 }

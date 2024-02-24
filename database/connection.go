@@ -9,7 +9,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	_ "MovieReviewAPIs/models"
+	"MovieReviewAPIs/models"
+
 	"MovieReviewAPIs/utility"
 )
 
@@ -40,13 +41,38 @@ func InitializeDB() error {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
+	sqlDB, err := dbcon.DB()
+	if err != nil {
+		panic(err)
+	}
+	defer sqlDB.Close()
+
 	DB = dbcon
 
 	// Auto migrate models // TODO: add models here
-	// err = dbcon.AutoMigrate(&models.Movies{}, &models.User{}, &models.Log{}, &models.Client{}, &models.LoginPolicy{}, &models.PasswordPolicy{}, &models.PasswordHistory{})
-	// if err != nil {
-	// 	log.Fatalf("Error migrating models: %v", err)
-	// }
+	err = dbcon.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatalf("Error migrating models: %v", err)
+	}
+
+	settingDB()
 
 	return nil
+}
+
+func settingDB() {
+	// Get the underlying *sql.DB instance
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Fatalf("Error getting underlying *sql.DB: %v", err)
+	}
+
+	// Set max open connections
+	sqlDB.SetMaxOpenConns(20)
+
+	// Set max idle connections
+	sqlDB.SetMaxIdleConns(20)
+
+	// Set max lifetime
+	sqlDB.SetConnMaxLifetime(time.Minute * 5)
 }

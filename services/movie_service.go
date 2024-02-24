@@ -5,32 +5,32 @@ import (
 	"MovieReviewAPIs/repositories"
 )
 
-type MovieService struct {
-	MovieRepository *repositories.MovieRepository
+type movieService struct {
+	MovieRepository repositories.MovieRepository
 }
 
-func NewMovieService(movieRepository *repositories.MovieRepository) *MovieService {
-	return &MovieService{
+func NewMovieService(movieRepository repositories.MovieRepository) *movieService {
+	return &movieService{
 		MovieRepository: movieRepository,
 	}
 }
 
-func (s *MovieService) GetAllMovies() ([]models.Movies, error) {
+func (s *movieService) GetAllMovies() ([]models.Movies, error) {
 	return s.MovieRepository.GetAllMovies()
 }
 
-func (s *MovieService) GetMovieByID(id uint) (*models.Movies, error) {
+func (s *movieService) GetMovieByID(id uint) (*models.Movies, error) {
 	return s.MovieRepository.FindMovieByID(id)
 }
 
-func (s *MovieService) CreateMovie(movie *models.Movies) error {
+func (s *movieService) CreateMovie(movie *models.Movies) error {
 	return s.MovieRepository.CreateMovie(movie)
 }
 
-func (s *MovieService) UpdateMovie(movie *models.Movies) error {
+func (s *movieService) UpdateMovie(movie *models.Movies) error {
 	return s.MovieRepository.UpdateMovieByID(movie)
 }
 
-func (s *MovieService) DeleteMovieByID(id uint) error {
+func (s *movieService) DeleteMovieByID(id uint) error {
 	return s.MovieRepository.DeleteMovieByID(id)
 }
