@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"MovieReviewAPIs/models"
+	_ "MovieReviewAPIs/models"
 )
 
 var DB *gorm.DB
@@ -39,10 +39,10 @@ func InitializeDB() error {
 	DB = dbcon
 
 	// Auto migrate models // TODO: add models here
-	err = dbcon.AutoMigrate(&models.Movie{})
-	if err != nil {
-		log.Fatalf("Error migrating models: %v", err)
-	}
+	// err = dbcon.AutoMigrate(&models.Movie{}, &models.User{}, &models.Log{}, &models.Client{}, &models.LoginPolicy{}, &models.PasswordPolicy{}, &models.PasswordHistory{})
+	// if err != nil {
+	// 	log.Fatalf("Error migrating models: %v", err)
+	// }
 
 	return nil
 }
