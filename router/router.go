@@ -29,8 +29,8 @@ func UserRouter(app *fiber.App, Uhandler *handler.UserHandler) {
 
 	auth := app.Group("/api", authentication.DeserializeRequiresAuth)
 
-	auth.Post("/register", Uhandler.RegisterUser)
-	auth.Post("/login", Uhandler.LoginUser)
+	app.Post("/register", Uhandler.RegisterUser)
+	app.Post("/login", Uhandler.LoginUser)
 	auth.Post("/logout", Uhandler.LogoutUser)
 
 }

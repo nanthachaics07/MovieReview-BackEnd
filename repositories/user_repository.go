@@ -16,6 +16,10 @@ type userRepository struct {
 	db *gorm.DB
 }
 
+// type fiberS struct {
+// 	c *fiber.Ctx
+// }
+
 func NewUserRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db: db}
 }
@@ -49,6 +53,14 @@ func (r *userRepository) LoginUser(user *models.User) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	// fiberS.c.Cookie(&fiber.Cookie{
+	// 	Name:     "jwt",
+	// 	Value:    tokenString,
+	// 	Expires:  time.Now().Add(time.Hour * 72),
+	// 	HTTPOnly: true,
+	// })
+
 	return tokenString, nil
 }
 
@@ -63,7 +75,7 @@ func (r *userRepository) RegisterUser(user *models.User) error {
 	newUser := &models.User{
 		Name:     user.Name,
 		Email:    user.Email,
-		Password: []byte(hashPass),
+		Password: string(hashPass),
 	}
 
 	result := r.db.Create(newUser)

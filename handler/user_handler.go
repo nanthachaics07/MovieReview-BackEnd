@@ -3,6 +3,7 @@ package handler
 import (
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/services"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -26,6 +27,21 @@ func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
+
+	// Generate token
+	token, err := u.UserService.LoginUser(userL)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+	}
+
+	// Set cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+	})
+
 	return c.JSON(fiber.Map{"status": "success", "user": userLogin})
 }
 
@@ -45,5 +61,14 @@ func (u *UserHandler) LogoutUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
+
+	// Set cookie
+	// c.Cookie(&fiber.Cookie{
+	// 	Name:     "jwt",
+	// 	Value:    "",
+	// 	Expires:  time.Now().Add(-time.Hour),
+	// 	HTTPOnly: true,
+	// })
+
 	return c.JSON(fiber.Map{"status": "success", "message": "User logged out successfully"})
 }
