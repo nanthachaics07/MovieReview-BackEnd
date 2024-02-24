@@ -18,33 +18,32 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 }
 
 func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
-	user := new(models.User)
-	if err := c.BodyParser(user); err != nil {
+	userL := new(models.User)
+	if err := c.BodyParser(userL); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
-	user, err := u.UserService.LoginUser(user)
+	userLogin, err := u.UserService.LoginUser(userL)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
-	return c.JSON(fiber.Map{"status": "success", "user": user})
+	return c.JSON(fiber.Map{"status": "success", "user": userLogin})
 }
 
 func (u *UserHandler) RegisterUser(c *fiber.Ctx) error {
-	user := new(models.User)
-	if err := c.BodyParser(user); err != nil {
+	userR := new(models.User)
+	if err := c.BodyParser(userR); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
-	user, err := u.UserService.RegisterUser(user)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
-	}
-	return c.JSON(fiber.Map{"status": "success", "user": user})
+	userRegister := u.UserService.RegisterUser(userR)
+
+	return c.JSON(fiber.Map{"status": "success", "user": userRegister})
 }
 
-func (u *UserHandler) GetAllUsers(c *fiber.Ctx) error {
-	users, err := u.UserService.GetAllUsers()
+func (u *UserHandler) LogoutUser(c *fiber.Ctx) error {
+
+	err := u.UserService.LogoutUser(c)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
 	}
-	return c.JSON(fiber.Map{"status": "success", "data": users})
+	return c.JSON(fiber.Map{"status": "success", "message": "User logged out successfully"})
 }
