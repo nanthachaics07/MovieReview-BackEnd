@@ -118,8 +118,6 @@ func initializeDB() *gorm.DB {
 }
 
 func defineRoutes(app *fiber.App, db *gorm.DB) {
-	// Define root route
-	app.Get("/", HelloWorld)
 
 	// Middleware: Authentication required for movie routes
 	app.Use("/movie/:id", authenticationRequired)
@@ -174,10 +172,6 @@ func defineRoutes(app *fiber.App, db *gorm.DB) {
 	})
 
 	app.Post("/logout", LogoutUser)
-}
-
-func HelloWorld(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
 }
 
 func GetAllMovies(db *gorm.DB) []Movie {
