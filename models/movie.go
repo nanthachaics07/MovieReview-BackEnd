@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-type Movie struct {
+type Movies struct {
 	gorm.Model
 	ID            uint   `json:"id" gorm:"primaryKey"`
 	Title         string `json:"title"`

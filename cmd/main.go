@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"MovieReviewAPIs/database"
+	"MovieReviewAPIs/repositories"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,6 +19,9 @@ func main() {
 
 	// Initialize Fiber app
 	app := fiber.New()
+
+	// Initialize Repository
+	repositories.NewMovieRepository(database.DB)
 
 	// Define routes
 

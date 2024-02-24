@@ -39,7 +39,7 @@ func InitializeDB() error {
 	DB = dbcon
 
 	// Auto migrate models // TODO: add models here
-	// err = dbcon.AutoMigrate(&models.Movie{}, &models.User{}, &models.Log{}, &models.Client{}, &models.LoginPolicy{}, &models.PasswordPolicy{}, &models.PasswordHistory{})
+	// err = dbcon.AutoMigrate(&models.Movies{}, &models.User{}, &models.Log{}, &models.Client{}, &models.LoginPolicy{}, &models.PasswordPolicy{}, &models.PasswordHistory{})
 	// if err != nil {
 	// 	log.Fatalf("Error migrating models: %v", err)
 	// }
