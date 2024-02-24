@@ -2,16 +2,15 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler"
 	"MovieReviewAPIs/repositories"
 	"MovieReviewAPIs/router"
 	"MovieReviewAPIs/services"
+	"MovieReviewAPIs/utility"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -20,6 +19,12 @@ func main() {
 	err := database.InitializeDB()
 	if err != nil {
 		log.Fatalf("Error initializing database: %v", err)
+	}
+
+	// Load configuration
+	config, err := utility.GetConfig()
+	if err != nil {
+		log.Fatalf("Error loading configuration: %v", err)
 	}
 
 	// Initialize Fiber app
@@ -38,9 +43,7 @@ func main() {
 	router.Router(app, movieHandler)
 
 	// Start Fiber server
-	godotenv.Load(".env")
-	port := os.Getenv("APP_port")
-	err = app.Listen(":" + port)
+	err = app.Listen(config.AppPort)
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}

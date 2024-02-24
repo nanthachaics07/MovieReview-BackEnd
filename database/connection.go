@@ -5,20 +5,24 @@ import (
 	"os"
 	"time"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
 	_ "MovieReviewAPIs/models"
+	"MovieReviewAPIs/utility"
 )
 
 var DB *gorm.DB
 
 func InitializeDB() error {
 	// Connect to PostgreSQL database
-	godotenv.Load(".env")
-	dsn := os.Getenv("DB_prod")
+	config, err := utility.GetConfig()
+	if err != nil {
+		log.Fatalf("Error getting config: %v", err)
+	}
+
+	dsn := config.DBPass
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
