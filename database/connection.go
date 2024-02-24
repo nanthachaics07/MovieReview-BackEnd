@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,9 +13,13 @@ import (
 	"MovieReviewAPIs/model"
 )
 
-func InitializeDB() *gorm.DB {
+var DB *gorm.DB
+
+func InitializeDB() error {
 	// Connect to PostgreSQL database
-	dsn := "host=localhost user=myuser password=mypassword dbname=mydatabase port=5432 sslmode=disable"
+	godotenv.Load(".env")
+	dsn := os.Getenv("DB_prod")
+
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -24,18 +29,20 @@ func InitializeDB() *gorm.DB {
 		},
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	dbcon, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: newLogger,
 	})
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
-	// Auto migrate models
-	err = db.AutoMigrate(&model.Movie{})
+	DB = dbcon
+
+	// Auto migrate models // TODO: add models here
+	err = dbcon.AutoMigrate(&model.Movie{})
 	if err != nil {
 		log.Fatalf("Error migrating models: %v", err)
 	}
 
-	return db
+	return nil
 }
