@@ -31,6 +31,6 @@ func (s *MovieService) UpdateMovie(movie *models.Movies) error {
 	return s.MovieRepository.UpdateMovieByID(movie)
 }
 
-func (s *MovieService) DeleteMovie(id uint) error {
+func (s *MovieService) DeleteMovieByID(id uint) error {
 	return s.MovieRepository.DeleteMovieByID(id)
 }
