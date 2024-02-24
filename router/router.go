@@ -7,12 +7,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+/*
+	Example Router Path if used Authentication
+
+	"localhost:3000/api/movies/:id"
+
+*/
+
 func MovieRouter(app *fiber.App, Mhandler *handler.MovieHandler) {
 
 	app.Get("/movies", Mhandler.GetAllMovies)
 
 	auth := app.Group("/api", authentication.DeserializeRequiresAuth)
-
 	auth.Get("/movies/:id", Mhandler.GetMovieByID)
 	auth.Post("/movies", Mhandler.CreateMovie)
 	auth.Put("/movies/:id", Mhandler.UpdateMovie)
@@ -27,10 +33,10 @@ func MovieRouter(app *fiber.App, Mhandler *handler.MovieHandler) {
 
 func UserRouter(app *fiber.App, Uhandler *handler.UserHandler) {
 
-	auth := app.Group("/api", authentication.DeserializeRequiresAuth)
-
 	app.Post("/register", Uhandler.RegisterUser)
 	app.Post("/login", Uhandler.LoginUser)
+
+	auth := app.Group("/api", authentication.DeserializeRequiresAuth)
 	auth.Post("/logout", Uhandler.LogoutUser)
 
 }

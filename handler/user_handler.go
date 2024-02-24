@@ -39,7 +39,7 @@ func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
-		Expires:  time.Now().Add(time.Hour * 24),
+		Expires:  time.Now().Add(time.Hour * 1),
 		HTTPOnly: true,
 	})
 
@@ -65,14 +65,6 @@ func (u *UserHandler) LogoutUser(c *fiber.Ctx) error {
 	if err != nil {
 		return errs.NewBadRequestError(err.Error())
 	}
-
-	// Set cookie
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    "",
-	// 	Expires:  time.Now().Add(-time.Hour),
-	// 	HTTPOnly: true,
-	// })
 
 	return c.JSON(fiber.Map{
 		"status":  "success",

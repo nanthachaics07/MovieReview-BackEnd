@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -13,6 +14,16 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 )
+
+func initTimeZone() {
+	ict, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Timezone: ", ict)
+
+	time.Local = ict
+}
 
 func main() {
 
@@ -55,13 +66,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
-}
-
-func initTimeZone() {
-	ict, err := time.LoadLocation("Asia/Bangkok")
-	if err != nil {
-		panic(err)
-	}
-
-	time.Local = ict
 }

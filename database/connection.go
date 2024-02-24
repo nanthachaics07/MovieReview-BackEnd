@@ -10,8 +10,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"MovieReviewAPIs/models"
-
 	"MovieReviewAPIs/utility"
 )
 
@@ -51,7 +49,10 @@ func InitializeDB() error {
 	DB = dbcon
 
 	// Auto migrate models // TODO: add models here
-	err = dbcon.AutoMigrate(&models.User{})
+	err = dbcon.AutoMigrate(
+
+	// &models.User{},
+	)
 	if err != nil {
 		log.Fatalf("Error migrating models: %v", err)
 	}
@@ -75,5 +76,16 @@ func settingDB() {
 	sqlDB.SetMaxIdleConns(20)
 
 	// Set max lifetime
-	// sqlDB.SetConnMaxLifetime(time.Minute * 5)
+	sqlDB.SetConnMaxLifetime(time.Minute * 5)
+
+	// Set max idle time
+	// sqlDB.SetConnMaxIdleTime(time.Minute * 5)
+
+	// Ping the database
+	err = sqlDB.Ping()
+	if err != nil {
+		log.Fatalf("Error pinging database: %v", err)
+	}
+
+	fmt.Println("Connected to database")
 }
