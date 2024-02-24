@@ -1,10 +1,16 @@
 package router
 
-import "github.com/gofiber/fiber"
+import (
+	_ "MovieReviewAPIs/authentication"
+	"MovieReviewAPIs/handler"
 
-func RouterBrowser(app *fiber.App) {
-	// TODO: implement
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	"github.com/gofiber/fiber/v2"
+)
+
+func Router(app *fiber.App) {
+	app.Get("/api/movies", handler.GetAllMovies)
+	app.Get("/api/movies/:id", handler.GetMovieByID)
+	app.Post("/api/movies", handler.CreateMovie)
+	app.Put("/api/movies/:id", handler.UpdateMovie)
+	app.Delete("/api/movies/:id", handler.DeleteMovie)
 }

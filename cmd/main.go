@@ -4,7 +4,10 @@ import (
 	"log"
 
 	"MovieReviewAPIs/database"
+	"MovieReviewAPIs/handler"
 	"MovieReviewAPIs/repositories"
+	"MovieReviewAPIs/router"
+	"MovieReviewAPIs/services"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,9 +24,16 @@ func main() {
 	app := fiber.New()
 
 	// Initialize Repository
-	repositories.NewMovieRepository(database.DB)
+	movieRepo := repositories.NewMovieRepository(database.DB)
 
-	// Define routes
+	// Initialize movie service
+	movieService := services.NewMovieService(movieRepo)
+
+	// Initialize Handler
+	movieHandler := handler.NewMovieHandler(movieService)
+
+	// Initialize routes
+	router.Router(app, movieHandler)
 
 	// Start Fiber server
 	err = app.Listen(":8080")
