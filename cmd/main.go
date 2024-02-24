@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler"
@@ -10,6 +11,7 @@ import (
 	"MovieReviewAPIs/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -36,7 +38,9 @@ func main() {
 	router.Router(app, movieHandler)
 
 	// Start Fiber server
-	err = app.Listen(":8080")
+	godotenv.Load(".env")
+	port := os.Getenv("APP_port")
+	err = app.Listen(":" + port)
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
