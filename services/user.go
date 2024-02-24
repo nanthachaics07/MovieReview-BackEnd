@@ -3,7 +3,7 @@ package services
 import (
 	"MovieReviewAPIs/models"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 type UserService interface {

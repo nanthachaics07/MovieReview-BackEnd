@@ -36,15 +36,19 @@ func main() {
 
 	// Initialize Repository
 	movieRepo := repositories.NewMovieRepository(database.DB)
+	userRepo := repositories.NewUserRepository(database.DB)
 
 	// Initialize movie service
 	movieService := services.NewMovieService(movieRepo)
+	userService := services.NewUserService(userRepo)
 
 	// Initialize Handler
 	movieHandler := handler.NewMovieHandler(movieService)
+	userHandler := handler.NewUserHandler(userService)
 
 	// Initialize routes
-	router.Router(app, movieHandler)
+	router.MovieRouter(app, movieHandler)
+	router.UserRouter(app, userHandler)
 
 	// Start Fiber server
 	err = app.Listen(config.AppPort)
