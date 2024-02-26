@@ -11,7 +11,8 @@ Project Movie Reviews is a backend-only GoAPI project designed using the Hexagon
 
 // Backend GolangAPIs `SOON`
 
-Release: On branch `Develop`
+Release: On branch `Master`
+Lasted Update: On Branch `Develop`
 
 # Repository Structure
 
