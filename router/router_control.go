@@ -44,26 +44,28 @@ func InitRouterHeaderConfig(app *fiber.App) {
 }
 
 func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *handler.UserHandler) {
-	// Create value Sub Router
-	// app.Mount("/api", sub)
+	// Create value Sub Router Group
+	sub := app.Group("/auth")
+	sub.Post("/register", Uhandler.RegisterUserHandler)
+	sub.Post("/login", Uhandler.LoginUserHandler)
+	sub.Post("/logout", middlewares.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
 
-	// sub.Route("/auth", func(r fiber.Router) {
-	// 	r.Post("/login", Uhandler.RegisterUserHandler)
-	// 	r.Post("/register", Uhandler.RegisterUserHandler)
-	// 	r.Post("/logout", Uhandler.LogoutUserHandler)
-	// })
-	// sub.Route("/movies", func(r fiber.Router) {
-	// 	r.Get("/", Mhandler.GetMovieForHomePage)
-	// 	r.Get("/:id", Mhandler.GetMovieByID)
-	// 	r.Post("/", Mhandler.CreateMovie)
-	// 	r.Put("/:id", Mhandler.UpdateMovie)
-	// 	r.Delete("/:id", Mhandler.DeleteMovie)
-	// })
-	app.Get("/movies", Mhandler.GetAllMovies)
+	// Main User Movie Router Group
+	app.Get("/movies", Mhandler.GetMovieForHomePage)
+	app.Get("/allmovies", Mhandler.GetAllMovies)
+	app.Get("/movie/:id", Mhandler.GetMovieByID)
 
-	app.Post("/register", Uhandler.RegisterUserHandler)
-	app.Post("/login", Uhandler.LoginUserHandler)
-	app.Post("/logout", middlewares.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
+	// Admin Setting Movie Review Router Group
+	admin := app.Group("/admin")
+	admin.Post("/movie", Mhandler.CreateMovie)
+	admin.Put("/movie/:id", Mhandler.UpdateMovie)
+	admin.Delete("/movie/:id", Mhandler.DeleteMovie)
+
+	/*
+		Force Delete movie or Delete All
+		## Pls Contract Developer
+			- Use Only for testing นะจ๊ะ
+	*/
 }
 
 func RouterPortListener(app *fiber.App) {

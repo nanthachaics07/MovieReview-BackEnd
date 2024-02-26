@@ -22,7 +22,7 @@ func initTimeZone() {
 	if err != nil {
 		panic(err)
 	} else if ict.String() != "Asia/Bangkok" {
-		log.Fatal("Timezone is not UTC+7")
+		log.Fatal("Timezone is not UTC+7 BKK")
 	}
 	fmt.Println("Timezone: ", ict)
 
@@ -31,8 +31,8 @@ func initTimeZone() {
 
 func main() {
 
-	// Tell Me Who Handsome
 	//TODO: Delete this config if U Not Funny
+	// Tell Me Who Handsome
 	errs := godotenv.Load("startup.env")
 	if errs != nil {
 		log.Fatalf("Error loading .env file: %v", errs)
