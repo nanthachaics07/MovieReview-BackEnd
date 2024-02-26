@@ -25,18 +25,36 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) LoginUser(user *models.User, c *fiber.Ctx) (string, error) {
-	payload := new(models.User)
-	result := r.db.Where("email =?", user.Email).First(payload)
-	if result.Error != nil {
-		return "", errs.NewBadRequestError(result.Error.Error())
+func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) error {
+
+	// result := r.db.Where("email =?", user.Email).First(payload)
+	// if result.Error != nil {
+	// 	return "", errs.NewBadRequestError(result.Error.Error())
+	// }
+
+	if err := c.BodyParser(&payload); err != nil {
+		return errs.NewBadRequestError(err.Error())
 	}
+
+	errors := models.ValidateStruct(payload)
+	// if len(errors) > 0 {
+	if errors != nil {
+		return errs.NewBadRequestError(errors[0].Value) // set first error
+	}
+
+	var user models.User
+	// result := r.db.Where("email =?", payload.Email).First(&user)
+	result := r.db.First(&user, "email = ?", payload.Email)
+	if result.Error != nil {
+		return errs.NewBadRequestError(result.Error.Error())
+	}
+
 	// compare hashed password
-	err := bcrypt.CompareHashAndPassword([]byte(payload.Password),
-		[]byte(user.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password),
+		[]byte(payload.Password))
 	if err != nil {
 		log.Printf("Password does not match : %v", err)
-		return "", errs.NewBadRequestError(err.Error())
+		return errs.NewBadRequestError(err.Error())
 	}
 	// Load configuration
 	config, err := utility.GetConfig()
@@ -47,14 +65,14 @@ func (r *userRepository) LoginUser(user *models.User, c *fiber.Ctx) (string, err
 	jwtSecretKey := config.JwtSecret
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"sub": payload.ID,
+			"sub": user.ID,
 			"exp": time.Now().Add(time.Hour * 72).Unix(),
 			"iat": time.Now().Unix(),
 			"nbf": time.Now().Unix(),
 		})
 	tokenStringVerify, err := token.SignedString([]byte(jwtSecretKey))
 	if err != nil {
-		return "", errs.NewBadgatewayError(err.Error())
+		return errs.NewBadgatewayError(err.Error())
 	}
 
 	// Set cookie  "Remember Me" check box
@@ -81,10 +99,10 @@ func (r *userRepository) LoginUser(user *models.User, c *fiber.Ctx) (string, err
 	// 	HTTPOnly: true,
 	// })
 
-	return tokenStringVerify, nil
+	return nil
 }
 
-func (r *userRepository) RegisterUser(user *models.User) error {
+func (r *userRepository) RegisterUser(user *models.User, c *fiber.Ctx) error {
 
 	// Hash the password
 	hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
