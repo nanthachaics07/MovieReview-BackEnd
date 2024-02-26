@@ -34,10 +34,10 @@ Run [ go run ./cmd ] to start the server.
 - [Godotenv](https://github.com/joho/godotenv)
 
 # Features
-Authentication handling
-Middleware for routing
-User handling
-Movie handling
+Authentication handling,
+Middleware for routing,
+User handling,
+Movie handling,
 Error handling
 
 # Contributors
@@ -47,5 +47,5 @@ Error handling
 This project is licensed under the `MIT` License - see the LICENSE.md file for details.
 
 # Acknowledgments
-Inspiration
+Inspiration,
 Libraries used
