@@ -19,13 +19,24 @@ Release: On branch `Develop`
 
 # Usage
 Clone the repository.
+[ git clone https://github.com/nanthachaics07/MovieReview-BackEnd.git ]
 Navigate to the cmd directory.
-Run go run main.go to start the server.
+Run [ go run ./cmd ] to start the server.
+
+# Dependencies
+- [GORM](https://gorm.io/)
+- [Fiber](https://fibergo.com/)
+- [JWT](https://github.com/appleboy/gin-jwt)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
+- [Middleware Cors]("https://github.com/rs/cors")
+- [Godotenv](https://github.com/joho/godotenv)
 
 # Features
 Authentication handling
-Movie handling
 Middleware for routing
+User handling
+Movie handling
 Error handling
 
 # Contributors
