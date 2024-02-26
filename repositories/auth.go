@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	LoginUser(user *models.User) (string, error)
-	RegisterUser(user *models.User) error
+	LoginUser(payload *models.SignInInput, c *fiber.Ctx) error
+	RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error
 	LogoutUser(c *fiber.Ctx) error
 }

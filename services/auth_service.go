@@ -15,12 +15,12 @@ func NewUserService(userRepository repositories.UserRepository) *userService {
 	return &userService{UserRepository: userRepository}
 }
 
-func (u *userService) LoginUser(user *models.User) (string, error) {
-	return u.UserRepository.LoginUser(user)
+func (u *userService) LoginUser(payload *models.SignInInput, c *fiber.Ctx) error {
+	return u.UserRepository.LoginUser(payload, c)
 }
 
-func (u *userService) RegisterUser(user *models.User) error {
-	return u.UserRepository.RegisterUser(user)
+func (u *userService) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {
+	return u.UserRepository.RegisterUser(payload, c)
 }
 
 func (u *userService) LogoutUser(c *fiber.Ctx) error {

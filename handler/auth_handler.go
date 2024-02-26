@@ -19,14 +19,15 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 	}
 }
 
-func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
-	userL := new(models.User)
-	if err := c.BodyParser(userL); err != nil {
+func (u *UserHandler) LoginUserHandler(payload *models.SignInInput, c *fiber.Ctx) error {
+	// userL := new(models.User)
+	if err := c.BodyParser(payload); err != nil {
 		return errs.NewBadRequestError(err.Error())
 	}
-	_, err := u.UserService.LoginUser(userL)
-	if err != nil {
-		return errs.NewBadRequestError(err.Error())
+
+	userLogin := u.UserService.LoginUser(payload, c)
+	if err := userLogin; err != nil {
+		return err
 	}
 
 	// Generate token
@@ -61,17 +62,17 @@ func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
 	})
 }
 
-func (u *UserHandler) RegisterUser(c *fiber.Ctx) error {
-	userR := new(models.User)
-	if err := c.BodyParser(userR); err != nil {
+func (u *UserHandler) RegisterUserHandler(payload *models.SignUpInput, c *fiber.Ctx) error {
+	// userR := new(models.User)
+	if err := c.BodyParser(payload); err != nil {
 		return errs.NewBadRequestError(err.Error())
 	}
-	userRegister := u.UserService.RegisterUser(userR)
+	userRegister := u.UserService.RegisterUser(payload, c)
 
 	return c.JSON(fiber.Map{"status": "success", "user": userRegister})
 }
 
-func (u *UserHandler) LogoutUser(c *fiber.Ctx) error {
+func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 
 	err := u.UserService.LogoutUser(c)
 	if err != nil {
