@@ -27,14 +27,12 @@ Authentication handling
 Movie handling
 Middleware for routing
 Error handling
+
 # Contributors
+[SAFECS07]
 
-[Your Name]
-[Contributor 1]
-[Contributor 2]
 # License
-
-This project is licensed under the [License Name] License - see the LICENSE.md file for details.
+This project is licensed under the [MIT] License - see the LICENSE.md file for details.
 
 # Acknowledgments
 Inspiration
