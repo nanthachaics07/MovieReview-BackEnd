@@ -11,9 +11,7 @@ import (
 	"MovieReviewAPIs/repositories"
 	"MovieReviewAPIs/router"
 	"MovieReviewAPIs/services"
-	"MovieReviewAPIs/utility"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -33,7 +31,10 @@ func main() {
 
 	// Tell Me Who Handsome
 	//TODO: Delete this config if U Not Funny
-	godotenv.Load("startup.env")
+	errs := godotenv.Load("startup.env")
+	if errs != nil {
+		log.Fatalf("Error loading .env file: %v", errs)
+	}
 	os.Getenv("Secret_Load")
 
 	// Initialize timezone
@@ -45,17 +46,13 @@ func main() {
 		log.Fatalf("Error initializing database: %v", err)
 	}
 
-	// Load configuration
-	config, err := utility.GetConfig()
-	if err != nil {
-		log.Fatalf("Error loading configuration: %v", err)
-	}
+	// // Initialize Fiber app
+	// app := fiber.New()
 
-	// Initialize Fiber app
-	app := fiber.New()
+	// Initialize router
+	router.InitRouterHeaderConfig()
 
 	// Enable CORS
-	router.InitRouterConfig(app)
 
 	// Initialize Repository
 	movieRepo := repositories.NewMovieRepository(database.DB)
@@ -70,11 +67,8 @@ func main() {
 	userHandler := handler.NewUserHandler(userService)
 
 	// Initialize routes
-	router.Router(app, movieHandler, userHandler)
+	router.RouterControl(movieHandler, userHandler)
 
-	// Start Fiber server
-	err = app.Listen(config.AppPort)
-	if err != nil {
-		log.Fatalf("Error starting server: %v", err)
-	}
+	// Start Fiber server (port)
+	router.RouterPortListener()
 }

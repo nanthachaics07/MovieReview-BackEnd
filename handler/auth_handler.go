@@ -19,8 +19,8 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 	}
 }
 
-func (u *UserHandler) LoginUserHandler(payload *models.SignInInput, c *fiber.Ctx) error {
-	// userL := new(models.User)
+func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
+	payload := new(models.SignInInput)
 	if err := c.BodyParser(payload); err != nil {
 		return errs.NewBadRequestError(err.Error())
 	}
@@ -62,8 +62,8 @@ func (u *UserHandler) LoginUserHandler(payload *models.SignInInput, c *fiber.Ctx
 	})
 }
 
-func (u *UserHandler) RegisterUserHandler(payload *models.SignUpInput, c *fiber.Ctx) error {
-	// userR := new(models.User)
+func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
+	payload := new(models.SignUpInput)
 	if err := c.BodyParser(payload); err != nil {
 		return errs.NewBadRequestError(err.Error())
 	}
