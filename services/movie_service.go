@@ -19,6 +19,10 @@ func (s *movieService) GetAllMovies() ([]models.Movies, error) {
 	return s.MovieRepository.GetAllMovies()
 }
 
+func (s *movieService) GetMovieEachFieldForHomePage() ([]models.Movies, error) {
+	return s.MovieRepository.GetMovieEachFieldForHomePage()
+}
+
 func (s *movieService) GetMovieByID(id uint) (*models.Movies, error) {
 	return s.MovieRepository.FindMovieByID(id)
 }

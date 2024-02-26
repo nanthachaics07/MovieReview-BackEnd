@@ -40,3 +40,24 @@ func NewBadRequestError(message string) error {
 		Messesage: message,
 	}
 }
+
+func NewUnauthorizedError(message string) error {
+	return AppError{
+		Code:      fiber.StatusUnauthorized,
+		Messesage: message,
+	}
+}
+
+func NewForbiddenError(message string) error {
+	return AppError{
+		Code:      fiber.StatusForbidden,
+		Messesage: message,
+	}
+}
+
+func NewBadgatewayError(message string) error {
+	return AppError{
+		Code:      fiber.StatusBadGateway,
+		Messesage: message,
+	}
+}

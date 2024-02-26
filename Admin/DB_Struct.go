@@ -1,8 +1,8 @@
-package models
+package main
 
 import "gorm.io/gorm"
 
-type Movies struct {
+type Movie struct {
 	gorm.Model
 	Title         string `json:"title"`
 	ReleaseDate   string `json:"release_date"`
@@ -19,11 +19,4 @@ type Movies struct {
 	MPAA          string `json:"mpaa_rating"`
 	Description   string `json:"description"`
 	ImageURL      string `json:"imageUrl"`
-}
-
-type MovieOnHomePage struct {
-	Title       string `json:"title"`
-	ReleaseDate string `json:"release_date"`
-	MPAA        string `json:"mpaa"`
-	ImageURL    string `json:"image_url"`
 }

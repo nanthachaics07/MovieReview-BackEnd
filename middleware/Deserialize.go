@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/utility"
 	"fmt"
 	"log"
@@ -21,15 +22,13 @@ func DeserializeRequiresAuth(c *fiber.Ctx) error {
 			return []byte(config.JwtSecret), nil
 		})
 	if err != nil || !token.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
+		fmt.Println(err)
+		return errs.NewUnauthorizedError("Unauthorized Token Invalid") // 401
 	}
 	claims, ok := token.Claims.(*jwt.MapClaims)
 	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
+		fmt.Println(err)
+		return errs.NewUnauthorizedError("Unauthorized Token Claims") // 401
 	}
 
 	fmt.Println(claims)

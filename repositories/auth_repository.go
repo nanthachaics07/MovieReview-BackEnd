@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
 	"log"
@@ -24,18 +25,18 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) LoginUser(user *models.User) (string, error) {
-	selectedUser := new(models.User)
-	result := r.db.Where("email =?", user.Email).First(selectedUser)
+func (r *userRepository) LoginUser(user *models.User, c *fiber.Ctx) (string, error) {
+	payload := new(models.User)
+	result := r.db.Where("email =?", user.Email).First(payload)
 	if result.Error != nil {
-		return "", result.Error
+		return "", errs.NewBadRequestError(result.Error.Error())
 	}
 	// compare hashed password
-	err := bcrypt.CompareHashAndPassword([]byte(selectedUser.Password),
+	err := bcrypt.CompareHashAndPassword([]byte(payload.Password),
 		[]byte(user.Password))
 	if err != nil {
 		log.Printf("Password does not match : %v", err)
-		return "", err
+		return "", errs.NewBadRequestError(err.Error())
 	}
 	// Load configuration
 	config, err := utility.GetConfig()
@@ -46,13 +47,32 @@ func (r *userRepository) LoginUser(user *models.User) (string, error) {
 	jwtSecretKey := config.JwtSecret
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"user_id": selectedUser.ID,
-			"exp":     time.Now().Add(time.Hour * 72).Unix(),
+			"sub": payload.ID,
+			"exp": time.Now().Add(time.Hour * 72).Unix(),
+			"iat": time.Now().Unix(),
+			"nbf": time.Now().Unix(),
 		})
-	tokenString, err := token.SignedString([]byte(jwtSecretKey))
+	tokenStringVerify, err := token.SignedString([]byte(jwtSecretKey))
 	if err != nil {
-		return "", err
+		return "", errs.NewBadgatewayError(err.Error())
 	}
+
+	// Set cookie  "Remember Me" check box
+	expires := time.Hour * 1 // Default expiration time
+	if rememberMe := c.FormValue("remember"); rememberMe == "true" {
+		expires = time.Hour * 24 // Extend expiration time for "Remember Me"
+	}
+
+	const setDoman = "localhost" //TODO: 	fix move to .env
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt",
+		Value:    tokenStringVerify,
+		Path:     "/",
+		Expires:  time.Now().Add(expires),
+		HTTPOnly: true,
+		Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
+		Domain:   setDoman,
+	})
 
 	// fiberS.c.Cookie(&fiber.Cookie{
 	// 	Name:     "jwt",
@@ -61,10 +81,11 @@ func (r *userRepository) LoginUser(user *models.User) (string, error) {
 	// 	HTTPOnly: true,
 	// })
 
-	return tokenString, nil
+	return tokenStringVerify, nil
 }
 
 func (r *userRepository) RegisterUser(user *models.User) error {
+
 	// Hash the password
 	hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -86,17 +107,13 @@ func (r *userRepository) RegisterUser(user *models.User) error {
 }
 
 func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
-	cookie := fiber.Cookie{
+	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    "",
 		Expires:  time.Now().Add(-time.Hour),
 		HTTPOnly: true,
-	}
-
-	c.Cookie(&cookie)
-
-	// Return success message // TODO: Memory mapping
-	return c.JSON(fiber.Map{
+	})
+	return c.JSON(map[string]string{
 		"message": "User logged out successfully",
 	})
 }

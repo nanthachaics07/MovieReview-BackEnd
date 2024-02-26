@@ -29,6 +29,14 @@ func (r *movieRepository) GetAllMovies() ([]models.Movies, error) {
 	return movies, nil
 }
 
+func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.Movies, error) {
+	var movies []models.Movies
+	if err := r.db.Table("movies").Select("id, title, release_date, mpaa, image_url").Find(&movies).Error; err != nil {
+		return movies, err
+	}
+	return movies, nil
+}
+
 func (r *movieRepository) FindMovieByID(id uint) (*models.Movies, error) {
 	var movie models.Movies
 	if err := r.db.First(&movie, id).Error; err != nil {

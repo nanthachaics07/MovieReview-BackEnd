@@ -51,6 +51,14 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 	return c.JSON(movie)
 }
 
+func (h *MovieHandler) GetMovieForHomePage(c *fiber.Ctx) error {
+	movies, err := h.MovieService.GetMovieEachFieldForHomePage()
+	if err != nil {
+		return errs.NewUnexpectedError(err.Error())
+	}
+	return c.JSON(movies)
+}
+
 func (h *MovieHandler) CreateMovie(c *fiber.Ctx) error {
 	movie := new(models.Movies)
 	if err := c.BodyParser(movie); err != nil {

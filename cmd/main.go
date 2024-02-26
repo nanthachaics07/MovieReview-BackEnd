@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"MovieReviewAPIs/database"
@@ -13,12 +14,15 @@ import (
 	"MovieReviewAPIs/utility"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 func initTimeZone() {
 	ict, err := time.LoadLocation("Asia/Bangkok")
 	if err != nil {
 		panic(err)
+	} else if ict.String() != "Asia/Bangkok" {
+		log.Fatal("Timezone is not UTC+7")
 	}
 	fmt.Println("Timezone: ", ict)
 
@@ -26,6 +30,11 @@ func initTimeZone() {
 }
 
 func main() {
+
+	// Tell Me Who Handsome
+	//TODO: Delete this config if U Not Funny
+	godotenv.Load("startup.env")
+	os.Getenv("Secret_Load")
 
 	// Initialize timezone
 	initTimeZone()
@@ -45,6 +54,9 @@ func main() {
 	// Initialize Fiber app
 	app := fiber.New()
 
+	// Enable CORS
+	router.InitRouterConfig(app)
+
 	// Initialize Repository
 	movieRepo := repositories.NewMovieRepository(database.DB)
 	userRepo := repositories.NewUserRepository(database.DB)
@@ -58,8 +70,7 @@ func main() {
 	userHandler := handler.NewUserHandler(userService)
 
 	// Initialize routes
-	router.MovieRouter(app, movieHandler)
-	router.UserRouter(app, userHandler)
+	router.Router(app, movieHandler, userHandler)
 
 	// Start Fiber server
 	err = app.Listen(config.AppPort)
