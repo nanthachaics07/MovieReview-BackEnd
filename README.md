@@ -30,7 +30,7 @@ Run [ go run ./cmd ] to start the server.
 - [JWT](https://github.com/appleboy/gin-jwt)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
-- [Middleware Cors]("https://github.com/rs/cors")
+- [MiddlewareCors]("https://github.com/rs/cors")
 - [Godotenv](https://github.com/joho/godotenv)
 
 # Features
