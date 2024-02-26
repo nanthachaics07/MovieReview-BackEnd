@@ -5,6 +5,7 @@ import (
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -102,36 +103,58 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 	return nil
 }
 
-func (r *userRepository) RegisterUser(user *models.User, c *fiber.Ctx) error {
+func (r *userRepository) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {
+
+	if err := c.BodyParser(&payload); err != nil {
+		return errs.NewBadRequestError(err.Error())
+	}
+
+	errors := models.ValidateStruct(payload)
+	// if len(errors) > 0 {
+	if errors != nil {
+		return errs.NewBadRequestError(errors[0].Value) // set first error
+	}
+
+	if payload.Password != payload.PasswordConfirm {
+		return errs.NewBadRequestError("Password does not match")
+	}
 
 	// Hash the password
-	hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
 	// Create the user record
 	newUser := &models.User{
-		Name:     user.Name,
-		Email:    user.Email,
+		Name:     payload.Name,
+		Email:    payload.Email,
 		Password: string(hashPass),
+		// Photo:    &payload.Photo,  //TODO: 	upload image [SOON]
 	}
 
-	result := r.db.Create(newUser)
-	if result.Error != nil {
-		return result.Error
+	result := r.db.Create(&newUser)
+	// log check duplicate String
+	if result.Error != nil && !strings.Contains(result.Error.Error(), "duplicate") {
+		return errs.NewConflictError(result.Error.Error())
+	} else if result.Error != nil {
+		return errs.NewBadgatewayError(result.Error.Error())
+	} else if result.RowsAffected == 0 {
+		return errs.NewConflictError("User already exist")
+	} else {
+		return nil
 	}
-	return nil
 }
 
 func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
+
+	var expired = time.Now().Add(-time.Hour * 24)
+
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    "",
-		Expires:  time.Now().Add(-time.Hour),
+		Expires:  expired,
 		HTTPOnly: true,
 	})
-	return c.JSON(map[string]string{
-		"message": "User logged out successfully",
-	})
+	return nil
 }

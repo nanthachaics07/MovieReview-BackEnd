@@ -61,3 +61,10 @@ func NewBadgatewayError(message string) error {
 		Messesage: message,
 	}
 }
+
+func NewConflictError(message string) error {
+	return AppError{
+		Code:      fiber.StatusConflict,
+		Messesage: message,
+	}
+}
