@@ -19,6 +19,7 @@ type User struct {
 	UpdatedAt *time.Time `gorm:"not null;default:now()"`
 }
 
+// LoginInput
 type SignUpInput struct {
 	Name            string `json:"name" validate:"required"`
 	Email           string `json:"email" validate:"required"`
@@ -27,22 +28,25 @@ type SignUpInput struct {
 	// Photo           string `json:"photo"`
 }
 
+// LogoutInput
 type SignInInput struct {
 	Email    string `json:"email"  validate:"required"`
 	Password string `json:"password"  validate:"required"`
 }
 
+// UserResponse
 type UserResponse struct {
-	ID        uuid.UUID `json:"id,omitempty"`
-	Name      string    `json:"name,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	Role      string    `json:"role,omitempty"`
-	Photo     string    `json:"photo,omitempty"`
+	ID    uuid.UUID `json:"id,omitempty"`
+	Name  string    `json:"name,omitempty"`
+	Email string    `json:"email,omitempty"`
+	Role  string    `json:"role,omitempty"`
+	// Photo     string    `json:"photo,omitempty"`
 	Provider  string    `json:"provider"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// func used to filter user record
 func FilterUserRecord(user *User) UserResponse {
 	return UserResponse{
 		ID:    *user.ID,
