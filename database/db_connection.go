@@ -48,6 +48,8 @@ func InitializeDB() error {
 
 	DB = dbcon
 
+	// Create UUID extension in PG
+	// dbcon.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 	// Auto migrate models // TODO: add models here
 	err = dbcon.AutoMigrate(
 
@@ -87,5 +89,5 @@ func settingDB() {
 		log.Fatalf("Error pinging database: %v", err)
 	}
 
-	fmt.Println("Connected to database")
+	fmt.Println("Connected to database successfully")
 }

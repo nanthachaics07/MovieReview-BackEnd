@@ -18,8 +18,8 @@ func MiddlewareDeserializeRout(c *fiber.Ctx) error {
 
 	if strings.HasPrefix(authorization, "Bearer ") {
 		tokenString = strings.TrimPrefix(authorization, "Bearer ")
-	} else if c.Cookies("token") != "" {
-		tokenString = c.Cookies("token")
+	} else if c.Cookies("jwt") != "" {
+		tokenString = c.Cookies("jwt")
 	}
 
 	if tokenString == "" {
