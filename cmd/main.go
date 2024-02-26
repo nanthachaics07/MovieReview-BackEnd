@@ -17,6 +17,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Set timezone BKK
 func initTimeZone() {
 	ict, err := time.LoadLocation("Asia/Bangkok")
 	if err != nil {
@@ -29,7 +30,7 @@ func initTimeZone() {
 	time.Local = ict
 }
 
-func main() {
+func main() { // Do not delete any line in this func if U won't check each file
 
 	//TODO: Delete this config if U Not Funny
 	// Tell Me Who Handsome

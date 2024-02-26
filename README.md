@@ -4,50 +4,38 @@
 
 This project is Use Hexagonal Architecture structure. (จะได้แก้ง่ายๆ)
 
+# Description
+Project Movie Reviews is a backend-only GoAPI project designed using the Hexagonal Architecture structure for easier maintenance and scalability.
+
 **Note: this is a GoAPI project - Backend only**
 
 // Backend GolangAPIs `SOON`
 
 Release: On branch `Develop`
 
-Backend—Movie-hexagonal/
-|-- Admin/  `Force Controller Delete, Fix, Insert Data #Backend Only`
-|   |-- config/
-|   |   |-- config.go
-|   |-- etc/
-|   |   |-- json/
-|   |   |-- text/
-|   |-- main.go
-|   |-- DB_Strut.go
-|-- cmd/
-|   |-- main.go
-|-- database/
-|   |-- db_connection.go
-|-- handler/
-|   |-- errs/
-|   |   |-- errs.go
-|   |-- auth_handler.go
-|   |-- movie_handler.go
-|-- middleware/
-|   |-- authMiddleRout.go
-|-- models/
-|   |-- log.go
-|   |-- movie.go
-|   |-- user.go
-|-- repositories/
-|   |-- auth_repository.go
-|   |-- auth.go
-|   |-- movie_repository.go
-|   |-- movie.go
-|-- router/
-|   |-- router_control.go
-|   |-- router.go  `//# Empty File`
-|-- services/
-|   |-- auth_service.go
-|   |-- auth.go
-|   |-- movie_service.go
-|   |-- movie.go
-|-- utility/
-|   |-- loadConfig.go
-| 
-| -- (etc file)
+# Repository Structure
+
+![Screenshot](./image/Repository%20Structure.png)
+
+# Usage
+Clone the repository.
+Navigate to the cmd directory.
+Run go run main.go to start the server.
+
+# Features
+Authentication handling
+Movie handling
+Middleware for routing
+Error handling
+# Contributors
+
+[Your Name]
+[Contributor 1]
+[Contributor 2]
+# License
+
+This project is licensed under the [License Name] License - see the LICENSE.md file for details.
+
+# Acknowledgments
+Inspiration
+Libraries used
