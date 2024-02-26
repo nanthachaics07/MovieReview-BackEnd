@@ -54,8 +54,6 @@ func main() {
 	// Initialize router
 	router.InitRouterHeaderConfig(app)
 
-	// Enable CORS
-
 	// Initialize Repository
 	movieRepo := repositories.NewMovieRepository(database.DB)
 	userRepo := repositories.NewUserRepository(database.DB)

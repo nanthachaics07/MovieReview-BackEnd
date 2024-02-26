@@ -5,3 +5,5 @@
 **Note: this is a GoAPI project - Backend only**
 
 // Backend GolangAPIs `SOON`
+
+Release: On branch `Develop`
