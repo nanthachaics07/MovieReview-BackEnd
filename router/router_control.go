@@ -2,11 +2,11 @@ package router
 
 import (
 	"MovieReviewAPIs/handler"
-	"MovieReviewAPIs/middleware"
+
 	"MovieReviewAPIs/utility"
 	"log"
 
-	_ "MovieReviewAPIs/middleware"
+	"MovieReviewAPIs/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -63,9 +63,19 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 
 	app.Post("/register", Uhandler.RegisterUserHandler)
 	app.Post("/login", Uhandler.LoginUserHandler)
-	app.Post("/logout", middleware.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
+	app.Post("/logout", middlewares.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
 }
 
-func RouterPortListener() {
+func RouterPortListener(app *fiber.App) {
+	// Load configuration
+	config, err := utility.GetConfig()
+	if err != nil {
+		log.Fatalf("Error loading configuration: %v", err)
+	}
 
+	// Start Fiber server
+	err = app.Listen(config.AppPort)
+	if err != nil {
+		log.Fatalf("Error starting server: %v", err)
+	}
 }

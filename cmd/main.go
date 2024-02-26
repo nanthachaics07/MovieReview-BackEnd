@@ -11,7 +11,7 @@ import (
 	"MovieReviewAPIs/repositories"
 	"MovieReviewAPIs/router"
 	"MovieReviewAPIs/services"
-	"MovieReviewAPIs/utility"
+	_ "MovieReviewAPIs/utility"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -72,17 +72,6 @@ func main() {
 	router.RouterControl(app, movieHandler, userHandler)
 
 	// Start Fiber server (port)
-	// router.RouterPortListener()
+	router.RouterPortListener(app)
 
-	// Load configuration
-	config, err := utility.GetConfig()
-	if err != nil {
-		log.Fatalf("Error loading configuration: %v", err)
-	}
-
-	// Start Fiber server
-	err = app.Listen(config.AppPort)
-	if err != nil {
-		log.Fatalf("Error starting server: %v", err)
-	}
 }
