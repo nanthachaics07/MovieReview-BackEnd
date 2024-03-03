@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/services"
@@ -22,16 +23,21 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 	payload := new(models.SignInInput)
 	if err := c.BodyParser(payload); err != nil {
+		fmt.Println("Error parsing body: ", err)
+		database.LogInfoErr("LoginUserHandler", err.Error())
 		return errs.NewBadRequestError(err.Error())
 	}
+	database.LogInfoErr("LoginUserHandler Useremail", payload.Email)
 
 	userLogin := u.UserService.LoginUser(payload, c)
 	if err := userLogin; err != nil {
+		fmt.Println("Error logging in: ", err)
+		database.LogInfoErr("LoginUserHandler", err.Error())
 		return err
 	}
 
-	// Generate token
-	// token, err := u.UserService.LoginUser(userL)
+	// // Generate token
+	// token, err := u.UserService.LoginUser(payload, c)
 	// if err != nil {
 	// 	return errs.NewBadRequestError(err.Error())
 	// }
@@ -58,13 +64,15 @@ func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"status": "success",
-		"token":  "Token created successfully",
+		"token":  "token is generated",
 	})
 }
 
 func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
 	payload := new(models.SignUpInput)
 	if err := c.BodyParser(payload); err != nil {
+		fmt.Println("Error parsing body: ", err)
+		database.LogInfoErr("RegisterUserHandler", err.Error())
 		return errs.NewBadRequestError(err.Error())
 	}
 	userRegister := u.UserService.RegisterUser(payload, c)
@@ -77,6 +85,7 @@ func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 	err := u.UserService.LogoutUser(c)
 	if err != nil {
 		fmt.Println("Error logging out: ", err)
+		database.LogInfoErr("LogoutUserHandler", err.Error())
 		return errs.NewBadRequestError(err.Error())
 	}
 

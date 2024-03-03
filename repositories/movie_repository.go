@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/models"
 
 	"gorm.io/gorm"
@@ -16,6 +17,7 @@ func NewMovieRepository(db *gorm.DB) *movieRepository {
 
 func (r *movieRepository) CreateMovie(movie *models.Movies) error {
 	if err := r.db.Create(movie).Error; err != nil {
+		database.LogInfoErr("CreateMovie", err.Error())
 		return err
 	}
 	return nil
@@ -24,6 +26,7 @@ func (r *movieRepository) CreateMovie(movie *models.Movies) error {
 func (r *movieRepository) GetAllMovies() ([]models.Movies, error) {
 	var movies []models.Movies
 	if err := r.db.Find(&movies).Error; err != nil {
+		database.LogInfoErr("GetAllMovies", err.Error())
 		return nil, err
 	}
 	return movies, nil
@@ -32,6 +35,7 @@ func (r *movieRepository) GetAllMovies() ([]models.Movies, error) {
 func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.Movies, error) {
 	var movies []models.Movies
 	if err := r.db.Table("movies").Select("id, title, release_date, mpaa, image_url").Find(&movies).Error; err != nil {
+		database.LogInfoErr("GetMovieEachFieldForHomePage", err.Error())
 		return movies, err
 	}
 	return movies, nil
@@ -40,6 +44,7 @@ func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.Movies, error
 func (r *movieRepository) FindMovieByID(id uint) (*models.Movies, error) {
 	var movie models.Movies
 	if err := r.db.First(&movie, id).Error; err != nil {
+		database.LogInfoErr("FindMovieByID", err.Error())
 		return nil, err
 	}
 	return &movie, nil
@@ -47,6 +52,7 @@ func (r *movieRepository) FindMovieByID(id uint) (*models.Movies, error) {
 
 func (r *movieRepository) UpdateMovieByID(movie *models.Movies) error {
 	if err := r.db.Save(movie).Error; err != nil {
+		database.LogInfoErr("UpdateMovieByID", err.Error())
 		return err
 	}
 	return nil
@@ -54,6 +60,7 @@ func (r *movieRepository) UpdateMovieByID(movie *models.Movies) error {
 
 func (r *movieRepository) DeleteMovieByID(id uint) error {
 	if err := r.db.Delete(&models.Movies{}, id).Error; err != nil {
+		database.LogInfoErr("DeleteMovieByID", err.Error())
 		return err
 	}
 	return nil

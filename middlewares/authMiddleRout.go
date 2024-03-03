@@ -23,28 +23,33 @@ func MiddlewareDeserializeRout(c *fiber.Ctx) error {
 	}
 
 	if tokenString == "" {
-		return errs.NewUnauthorizedError("You are not logged in")
+		database.LogInfoErr("MiddlewareDeserializeRout", "You are not logged in")
+		return errs.NewUnauthorizedError("#.Empty token in UR Browser.# You are not logged in")
 	}
 
 	config, err := utility.GetConfig()
 	if err != nil {
+		database.LogInfoErr("MiddlewareDeserializeRout", "Error getting config")
 		fmt.Println("Error getting config: ", err)
 	}
 
 	tokenByte, err := jwt.Parse(tokenString, func(jwtToken *jwt.Token) (interface{}, error) {
 		if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
+			database.LogInfoErr("MiddlewareDeserializeRout", "unexpected signing method")
 			return nil, fmt.Errorf("unexpected signing method: %s", jwtToken.Header["alg"])
 		}
 		return []byte(config.JwtSecret), nil
 	})
 
 	if err != nil {
+		database.LogInfoErr("MiddlewareDeserializeRout", "Error parsing token in Header")
 		fmt.Println("Error parsing token in Header: ", err)
 		return errs.NewUnauthorizedError("invalid token")
 	}
 
 	claims, ok := tokenByte.Claims.(jwt.MapClaims)
 	if !ok || !tokenByte.Valid {
+		database.LogInfoErr("MiddlewareDeserializeRout", "Claims are not valid")
 		return errs.NewUnauthorizedError("Claims are not valid")
 
 	}
@@ -53,6 +58,7 @@ func MiddlewareDeserializeRout(c *fiber.Ctx) error {
 	database.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
 
 	if user.ID.String() != claims["sub"] {
+		database.LogInfoErr("MiddlewareDeserializeRout", "the user belonging to this token no logger exists")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "fail", "message": "the user belonging to this token no logger exists"})
 	}
 

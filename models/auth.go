@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// gorm:"type:varchar(10000);not null"
+
 type User struct {
 	ID       *uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	Name     string     `gorm:"type:varchar(100);not null"`

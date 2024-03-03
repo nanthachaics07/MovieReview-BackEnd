@@ -4,9 +4,10 @@ import "gorm.io/gorm"
 
 type Movie struct {
 	gorm.Model
-	Title         string `json:"title"`
-	ReleaseDate   string `json:"release_date"`
-	Runtime       string `json:"runtime"`
+	ID            uint   `json:"id" gorm:"primaryKey"`
+	Title         string `json:"title" gorm:"not null"`
+	ReleaseDate   string `json:"release_date" gorm:"not null"`
+	Runtime       string `json:"runtime" gorm:"not null"`
 	Rating        string `json:"rating"`
 	Category      string `json:"category"`
 	Popularity    string `json:"popularity"`

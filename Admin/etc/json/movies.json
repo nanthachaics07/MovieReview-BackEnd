@@ -1,5 +1,6 @@
 [
   {
+    "id": 1,
     "title": "The Godfather",
     "release_date": "1972-03-24",
     "runtime": "2 hours 55 minutes",
@@ -17,6 +18,7 @@
     "imageUrl": "https://img.monomax.me/-XnASaiSaflF2FV3NDZwMvnRo4k=/monomax-obj.obs.ap-southeast-2.myhuaweicloud.com/assets/fileupload/picture/the-godfather-508d945641aed.jpg"
   },
   {
+    "id": 2,
     "title": "The Shawshank Redemption",
     "release_date": "1994-09-23",
     "runtime": "2 hours 22 minutes",
@@ -34,6 +36,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg"
   },
   {
+    "id": 3,
     "title": "The Dark Knight Rises",
     "release_date": "2008-07-18",
     "runtime": "2 hours 32 minutes",
@@ -51,6 +54,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg"
   },
   {
+    "id": 4,
     "title": "Pulp Fiction",
     "release_date": "1994-10-14",
     "runtime": "2 hours 34 minutes",
@@ -68,6 +72,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg"
   },
   {
+    "id": 5,
     "title": "Schindler's List",
     "release_date": "1993-12-15",
     "runtime": "3 hours 15 minutes",
@@ -85,6 +90,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg"
   },
   {
+    "id": 6,
     "title": "The Lord of the Rings: The Return of the King",
     "release_date": "2003-12-17",
     "runtime": "3 hours 21 minutes",
@@ -102,6 +108,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/Lord_of_the_Rings_-_The_Return_of_the_King.jpg"
   },
   {
+    "id": 7,
     "title": "12 Angry Men",
     "release_date": "1957-04-10",
     "runtime": "1 hour 36 minutes",
@@ -119,6 +126,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/12_angry_men.jpg"
   },
   {
+    "id": 8,
     "title": "The Lord of the Rings: The Fellowship of the Ring",
     "release_date": "2001-12-19",
     "runtime": "2 hours 58 minutes",
@@ -136,6 +144,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/Lord_of_the_Rings_-_The_Fellowship_of_the_Ring_%282001%29_theatrical_poster.jpg"
   },
   {
+    "id": 9,
     "title": "Forrest Gump",
     "release_date": "1994-07-06",
     "runtime": "2 hours 22 minutes",
@@ -153,6 +162,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg"
   },
   {
+    "id": 10,
     "title": "Inception",
     "release_date": "2010-07-16",
     "runtime": "2 hours 28 minutes",
@@ -170,6 +180,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg"
   },
   {
+    "id": 11,
     "title": "Fight Club",
     "release_date": "1999-10-15",
     "runtime": "2 hours 19 minutes",
@@ -187,6 +198,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg"
   },
   {
+    "id": 12,
     "title": "The Lord of the Rings: The Two Towers",
     "release_date": "2002-12-18",
     "runtime": "2 hours 59 minutes",
@@ -204,6 +216,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/d2/The_Two_Towers_%282002%29_theatrical_poster.jpg"
   },
   {
+    "id": 13,
     "title": "Goodfellas",
     "release_date": "1990-09-21",
     "runtime": "2 hours 26 minutes",
@@ -221,6 +234,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg"
   },
   {
+    "id": 14,
     "title": "The Matrix",
     "release_date": "1999-03-31",
     "runtime": "2 hours 16 minutes",
@@ -238,6 +252,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg"
   },
   {
+    "id": 15,
     "title": "Star Wars: Episode V - The Empire Strikes Back",
     "release_date": "1980-06-20",
     "runtime": "2 hours 4 minutes",
@@ -255,6 +270,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg"
   },
   {
+    "id": 16,
     "title": "The Green Mile",
     "release_date": "1999-12-10",
     "runtime": "3 hours 9 minutes",
@@ -272,6 +288,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/ce/The_Green_Mile_%28movie_poster%29.jpg"
   },
   {
+    "id": 17,
     "title": "The Intouchables",
     "release_date": "2011-11-02",
     "runtime": "1 hour 52 minutes",
@@ -289,6 +306,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/93/The_Intouchables.jpg"
   },
   {
+    "id": 18,
     "title": "The Lord of the Rings: The Fellowship of the Ring",
     "release_date": "2001-12-19",
     "runtime": "2 hours 58 minutes",
@@ -306,6 +324,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/Lord_of_the_Rings_-_The_Fellowship_of_the_Ring_%282001%29_theatrical_poster.jpg"
   },
   {
+    "id": 19,
     "title": "Saving Private Ryan",
     "release_date": "1998-07-24",
     "runtime": "2 hours 49 minutes",
@@ -323,6 +342,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg"
   },
   {
+    "id": 20,
     "title": "The Pianist",
     "release_date": "2002-12-25",
     "runtime": "2 hours 30 minutes",
@@ -340,6 +360,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a3/The_Pianist_movie.jpg"
   },
   {
+    "id": 21,
     "title": "Gladiator",
     "release_date": "2000-05-05",
     "runtime": "2 hours 35 minutes",
@@ -357,6 +378,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8d/Gladiator_ver1.jpg"
   },
   {
+    "id": 22,
     "title": "The Departed",
     "release_date": "2006-10-06",
     "runtime": "2 hours 31 minutes",
@@ -374,6 +396,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/50/Departed234.jpg"
   },
   {
+    "id": 23,
     "title": "The Prestige",
     "release_date": "2006-10-20",
     "runtime": "2 hours 10 minutes",
@@ -391,6 +414,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg"
   },
   {
+    "id": 24,
     "title": "The Lion King",
     "release_date": "1994-06-24",
     "runtime": "1 hour 28 minutes",
@@ -408,6 +432,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/3d/The_Lion_King_poster.jpg"
   },
   {
+    "id": 25,
     "title": "The Usual Suspects",
     "release_date": "1995-09-15",
     "runtime": "1 hour 46 minutes",
@@ -425,6 +450,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9c/Usual_suspects_ver1.jpg"
   },
   {
+    "id": 26,
     "title": "American History X",
     "release_date": "1998-11-20",
     "runtime": "1 hour 59 minutes",
@@ -442,6 +468,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/39/American_History_X_poster.png"
   },
   {
+    "id": 27,
     "title": "The Shining",
     "release_date": "1980-06-13",
     "runtime": "2 hours 26 minutes",
@@ -459,6 +486,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/90/The_Shining_%281980%29_U.S._release_poster_-_variant_A.jpg"
   },
   {
+    "id": 28,
     "title": "The Silence of the Lambs",
     "release_date": "1991-02-14",
     "runtime": "1 hour 58 minutes",
@@ -476,6 +504,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/86/The_Silence_of_the_Lambs_poster.jpg"
   },
   {
+    "id": 29,
     "title": "The Professional",
     "release_date": "1994-11-18",
     "runtime": "1 hour 50 minutes",
@@ -493,6 +522,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/7e/The_Professional_Poster.jpg"
   },
   {
+    "id": 30,
     "title": "City of God",
     "release_date": "2002-02-13",
     "runtime": "2 hours 10 minutes",
@@ -510,6 +540,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/1/10/CidadedeDeus.jpg"
   },
   {
+    "id": 31,
     "title": "The Lives of Others",
     "release_date": "2006-03-23",
     "runtime": "2 hours 17 minutes",
@@ -527,6 +558,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/Das_leben_der_anderen_poster.jpg"
   },
   {
+    "id": 32,
     "title": "The Sting",
     "release_date": "1973-12-25",
     "runtime": "2 hours 9 minutes",
@@ -544,6 +576,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/Stingredfordnewman.jpg/220px-Stingredfordnewman.jpg"
   },
   {
+    "id": 33,
     "title": "Whiplash",
     "release_date": "2014-10-15",
     "runtime": "1 hour 46 minutes",
@@ -561,6 +594,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg"
   },
   {
+    "id": 34,
     "title": "The Departed",
     "release_date": "2006-10-06",
     "runtime": "2 hours 31 minutes",
@@ -578,6 +612,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/50/Departed234.jpg"
   },
   {
+    "id": 35,
     "title": "The Godfather: Part II",
     "release_date": "1974-12-20",
     "runtime": "3 hours 22 minutes",
@@ -595,6 +630,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/0/03/Godfather_part_ii.jpg"
   },
   {
+    "id": 36,
     "title": "The Dark Knight",
     "release_date": "2008-07-18",
     "runtime": "2 hours 32 minutes",
@@ -612,6 +648,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg"
   },
   {
+    "id": 37,
     "title": "Pulp Fiction (1994)",
     "release_date": "1994-10-14",
     "runtime": "2 hours 34 minutes",
@@ -629,6 +666,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/82/Pulp_Fiction_cover.jpg"
   },
   {
+    "id": 38,
     "title": "Schindler's List (1993)",
     "release_date": "1993-12-15",
     "runtime": "3 hours 15 minutes",
@@ -646,6 +684,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg"
   },
   {
+    "id": 39,
     "title": "The Lord of the Rings: The Return of the King (2003)",
     "release_date": "2003-12-17",
     "runtime": "3 hours 21 minutes",
@@ -663,6 +702,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/Lord_of_the_Rings_-_The_Return_of_the_King_%282003%29_theatrical_poster.jpg"
   },
   {
+    "id": 40,
     "title": "12 Angry Men",
     "release_date": "1957-04-10",
     "runtime": "1 hour 36 minutes",
@@ -680,6 +720,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/12_angry_men.jpg"
   },
   {
+    "id": 41,
     "title": "The Good, the Bad and the Ugly",
     "release_date": "1966-12-23",
     "runtime": "2 hours 31 minutes",
@@ -697,6 +738,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/6a/The_Good,_the_Bad_and_the_Ugly.jpg"
   },
   {
+    "id": 42,
     "title": "Forrest Gump",
     "release_date": "1994-06-23",
     "runtime": "2 hours 22 minutes",
@@ -714,6 +756,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg"
   },
   {
+    "id": 43,
     "title": "Inception",
     "release_date": "2010-07-16",
     "runtime": "2 hours 28 minutes",
@@ -731,6 +774,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg"
   },
   {
+    "id": 44,
     "title": "The Lord of the Rings: The Return Of Safe",
     "release_date": "2003-12-17",
     "runtime": "3 hours 21 minutes",
@@ -748,6 +792,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9b/The_Lord_of_the_Rings_-_The_Return_of_the_King_%282003%29.jpg"
   },
   {
+    "id": 45,
     "title": "The Lord of the Rings: The Two Towers",
     "release_date": "2002-12-18",
     "runtime": "2 hours 59 minutes",
@@ -765,6 +810,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9a/The_Lord_of_the_Rings_-_The_Two_Towers_%282002%29.jpg"
   },
   {
+    "id": 46,
     "title": "Goodfellas",
     "release_date": "1990-09-19",
     "runtime": "2 hours 58 minutes",
@@ -782,6 +828,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg"
   },
   {
+    "id": 47,
     "title": "The Matrix V - Resurrections",
     "release_date": "2021-03-31",
     "runtime": "2 hours 16 minutes",
@@ -799,6 +846,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9f/The_Matrix_Resurrections.jpg"
   },
   {
+    "id": 48,
     "title": "The Matrix V - The Last Trinity",
     "release_date": "2021-11-05",
     "runtime": "2 hours 16 minutes",
@@ -816,6 +864,7 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/en/0/0e/The_Matrix_Resurrections.jpg"
   },
   {
+    "id": 49,
     "title": "The Godfather",
     "release_date": "1972-03-24",
     "runtime": "2 hours 55 minutes",
@@ -833,6 +882,7 @@
     "imageUrl": "https://img.monomax.me/-XnASaiSaflF2FV3NDZwMvnRo4k=/monomax-obj.obs.ap-southeast-2.myhuaweicloud.com/assets/fileupload/picture/the-godfather-508d945641aed.jpg"
   },
   {
+    "id": 50,
     "title": "The Godfather: Part II",
     "release_date": "1974-12-20",
     "runtime": "3 hours 22 minutes",

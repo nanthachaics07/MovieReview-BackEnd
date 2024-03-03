@@ -48,11 +48,11 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	sub := app.Group("/auth")
 	sub.Post("/register", Uhandler.RegisterUserHandler)
 	sub.Post("/login", Uhandler.LoginUserHandler)
-	sub.Post("/logout", middlewares.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
+	sub.Post("/logout", Uhandler.LogoutUserHandler)
 
 	// Main User Movie Router Group
-	app.Get("/movies", Mhandler.GetMovieForHomePage)
-	app.Get("/allmovies", Mhandler.GetAllMovies)
+	app.Get("/home", Mhandler.GetMovieForHomePage)
+	app.Get("/allmovies", middlewares.MiddlewareDeserializeRout, Mhandler.GetAllMovies)
 	app.Get("/movie/:id", Mhandler.GetMovieByID)
 
 	// Admin Setting Movie Review Router Group

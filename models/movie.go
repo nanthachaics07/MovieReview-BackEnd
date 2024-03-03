@@ -1,9 +1,12 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Movies struct {
 	gorm.Model
+	ID            uint   `json:"id"`
 	Title         string `json:"title"`
 	ReleaseDate   string `json:"release_date"`
 	Runtime       string `json:"runtime"`
@@ -27,3 +30,22 @@ type MovieOnHomePage struct {
 	MPAA        string `json:"mpaa"`
 	ImageURL    string `json:"image_url"`
 }
+
+// type Movies struct {
+// 	gorm.Model
+// 	Title         string `gorm:"varchar(50);not null"`
+// 	ReleaseDate   string `gorm:"varchar(20);not null"`
+// 	Runtime       string `gorm:"varchar(20);not null"`
+// 	Rating        string `gorm:"varchar(20);"`
+// 	Category      string `gorm:"varchar(20);not null"`
+// 	Popularity    string `gorm:"varchar(20);not null"`
+// 	Budget        int    `gorm:"default:0;not null"`
+// 	Revenue       int    `gorm:"default:0;not null"`
+// 	Director      string `gorm:"varchar(50);not null"`
+// 	Casting       string `gorm:"varchar(100);not null"`
+// 	Writers       string `gorm:"varchar(50);not null"`
+// 	DistributedBy string `gorm:"varchar(50);not null"`
+// 	MPAA          string `gorm:"varchar(10);not null"`
+// 	Description   string `gorm:"varchar(1000);not null"`
+// 	ImageURL      string `gorm:"varchar(1000);not null"`
+// }

@@ -55,6 +55,7 @@ func main() {
 
 	// Open JSON file
 	filePath := "/Users/nanthachai/CS07_PROJECT/E-Commerce-Movie_Store/newBackEndGo/MovieReviewAPIs/Admin/etc/json/movies.json"
+	// filePath := "/Users/nanthachai/CS07_PROJECT/E-Commerce-Movie_Store/newBackEndGo/MovieReviewAPIs/Admin/etc/json/movie.json"
 
 	jsonData, err := ioutil.ReadFile(filePath)
 	if err != nil {
