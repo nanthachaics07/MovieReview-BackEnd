@@ -5,6 +5,7 @@ import (
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -82,6 +83,11 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 		database.LogInfoErr("LoginUser", err.Error())
 		return errs.NewBadgatewayError(err.Error())
 	}
+	fmt.Println("tokenStringVerify: ", tokenStringVerify)
+
+	// Set the token in the Authorization header
+	// c.Set("Authorization", "Bearer "+tokenStringVerify)
+	// fmt.Println("tokenStringVerify After c.Set: ", tokenStringVerify)
 
 	// Set cookie  "Remember Me" check box
 	expires := time.Hour * 1 // Default expiration time
@@ -96,21 +102,13 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 		Path:     "/",
 		Expires:  time.Now().Add(expires),
 		HTTPOnly: true,
-		// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
-		// Domain:   setDoman,
+		// 	// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
+		// 	// Domain:   setDoman,
 	})
-
-	// fiberS.c.Cookie(&fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    tokenString,
-	// 	Expires:  time.Now().Add(time.Hour * 72),
-	// 	HTTPOnly: true,
-	// })
 
 	database.UseTrackingLog(user.Email, "Login", 1)
 
 	return nil
-
 }
 
 func (r *userRepository) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {
@@ -182,5 +180,7 @@ func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
 	})
 
 	database.UseTrackingLog(c.IP(), "Logout", 3)
-	return nil
+	// Return a success response
+	return c.SendStatus(fiber.StatusOK)
+	// return nil
 }

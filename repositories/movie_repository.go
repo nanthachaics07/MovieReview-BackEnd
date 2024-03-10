@@ -25,6 +25,13 @@ func (r *movieRepository) CreateMovie(movie *models.Movies) error {
 
 func (r *movieRepository) GetAllMovies() ([]models.Movies, error) {
 	var movies []models.Movies
+	// var c *fiber.Ctx
+	// _, err := middlewares.VerifyAuth(c)
+	// if err != nil {
+	// 	database.LogInfoErr("GetAllMovies", err.Error())
+	// 	return nil, err
+	// }
+
 	if err := r.db.Find(&movies).Error; err != nil {
 		database.LogInfoErr("GetAllMovies", err.Error())
 		return nil, err

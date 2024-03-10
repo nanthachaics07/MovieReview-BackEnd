@@ -99,6 +99,7 @@ func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 	// c.Cookie(&cookie)
 
 	fmt.Println("User logged out successfully & Delete cookie")
+	database.UseTrackingLog(c.IP(), "Logout", 3)
 
 	return c.JSON(fiber.Map{
 		"status":  "success",
