@@ -58,17 +58,20 @@ func main() { // Do not delete any line in this func if U won't check each file
 	// Initialize Repository
 	movieRepo := repositories.NewMovieRepository(database.DB)
 	userRepo := repositories.NewUserRepository(database.DB)
+	accountRepo := repositories.NewAccountRepository(database.DB)
 
 	// Initialize movie service
 	movieService := services.NewMovieService(movieRepo)
 	userService := services.NewUserService(userRepo)
+	accountService := services.NewAccountService(accountRepo)
 
 	// Initialize Handler
 	movieHandler := handler.NewMovieHandler(movieService)
 	userHandler := handler.NewUserHandler(userService)
+	accountHandler := handler.NewAccountHandler(accountService)
 
 	// Initialize routes
-	router.RouterControl(app, movieHandler, userHandler)
+	router.RouterControl(app, movieHandler, userHandler, accountHandler)
 
 	// Start Fiber server (port)
 	router.RouterPortListener(app)

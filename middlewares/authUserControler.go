@@ -67,7 +67,8 @@ func VerifyAuth(c *fiber.Ctx) (*jwt.Token, error) {
 		log.Fatalf("Error getting config: %v", err)
 	}
 
-	return jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.JwtSecret), nil
-	})
+	return jwt.ParseWithClaims(cookie, &jwt.StandardClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(config.JwtSecret), nil
+		})
 }

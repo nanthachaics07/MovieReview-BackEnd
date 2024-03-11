@@ -7,6 +7,7 @@ import (
 	"MovieReviewAPIs/utility"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -55,6 +56,11 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 		return errs.NewBadRequestError(result.Error.Error())
 	}
 
+	if user.ID == 0 {
+		database.LogInfoErr("LoginUser", "User not found")
+		return errs.NewBadRequestError("User not found")
+	}
+
 	// compare hashed password
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password),
 		[]byte(payload.Password))
@@ -71,13 +77,23 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 	}
 	// generate token
 	jwtSecretKey := config.JwtSecret
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"sub": user.ID,
-			"exp": time.Now().Add(time.Hour * 72).Unix(),
-			"iat": time.Now().Unix(),
-			"nbf": time.Now().Unix(),
-		})
+	// token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+	// 	jwt.MapClaims{
+	// 		"sub": user.ID,
+	// 		"exp": time.Now().Add(time.Hour * 72).Unix(),
+	// 		"iat": time.Now().Unix(),
+	// 		"nbf": time.Now().Unix(),
+	// 	})
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    strconv.Itoa(int(user.ID)),
+		ExpiresAt: time.Now().Add(time.Hour * 1).Unix(), // 1 hour
+		// IssuedAt:  time.Now().Unix(),
+		// NotBefore: time.Now().Unix(),
+		// Subject:   user.Email,
+		// Audience:  []string{"localhost"},
+	})
+
 	tokenStringVerify, err := token.SignedString([]byte(jwtSecretKey))
 	if err != nil {
 		database.LogInfoErr("LoginUser", err.Error())
@@ -97,9 +113,9 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 
 	// const setDoman = "localhost" //TODO: 	fix move to .env
 	c.Cookie(&fiber.Cookie{
-		Name:     "jwt",
-		Value:    tokenStringVerify,
-		Path:     "/",
+		Name:  "jwt",
+		Value: tokenStringVerify,
+		// Path:     "/",
 		Expires:  time.Now().Add(expires),
 		HTTPOnly: true,
 		// 	// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
@@ -179,8 +195,8 @@ func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	database.UseTrackingLog(c.IP(), "Logout", 3)
+	// database.UseTrackingLog(c.IP(), "Logout", 3)
 	// Return a success response
-	return c.SendStatus(fiber.StatusOK)
-	// return nil
+	// return c.SendStatus(fiber.StatusOK)
+	return nil
 }

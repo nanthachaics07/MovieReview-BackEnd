@@ -2,12 +2,12 @@ package router
 
 import (
 	"MovieReviewAPIs/handler"
-	"MovieReviewAPIs/middlewares"
+	// "MovieReviewAPIs/middlewares"
 
 	"MovieReviewAPIs/utility"
 	"log"
 
-	// "MovieReviewAPIs/middlewares"
+	"MovieReviewAPIs/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -56,7 +56,7 @@ func InitRouterHeaderConfig(app *fiber.App) {
 	}))
 }
 
-func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *handler.UserHandler) {
+func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *handler.UserHandler, Ahandler *handler.AccountHandler) {
 	// Create value Sub Router Group
 	// Admin Setting Movie Review Router Group
 	admin := app.Group("/admin")
@@ -68,17 +68,19 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	sub := app.Group("/auth")
 	sub.Post("/register", Uhandler.RegisterUserHandler)
 	sub.Post("/login", Uhandler.LoginUserHandler)
-	app.Post("/logout", Uhandler.LogoutUserHandler)
-	// sub.Post("/logout", Uhandler.LogoutUserHandler)
+	sub.Post("/logout", Uhandler.LogoutUserHandler)
+	// sup.Post("/logout", Uhandler.LogoutUserHandler)
 
-	// acc := app.Group("/account")
-	// acc.Get("/user", Uhandler.GetUserHandler)
+	acc := app.Group("/account")
+	acc.Get("/user", Ahandler.UserAccountHandler)
+	acc.Get("/user/:id", Ahandler.UserAccountHandler)
+	acc.Get("/users", middlewares.AuthMiddleware(), Ahandler.UsersAccountAllHandler)
 	// acc.Patch("/", Uhandler.UpdateUserHandler)
 	// acc.Delete("/", Uhandler.DeleteUserHandler)
 
 	// Main User Movie Router Group
 	app.Get("/home", Mhandler.GetMovieForHomePage)
-	app.Get("/allmovies", Mhandler.GetAllMovies)
+	app.Get("/allmovies", middlewares.AuthMiddleware(), Mhandler.GetAllMovies)
 	app.Get("/movie/:id", Mhandler.GetMovieByID)
 
 	/*

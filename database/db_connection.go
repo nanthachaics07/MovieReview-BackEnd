@@ -1,6 +1,7 @@
 package database
 
 import (
+	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
 	"fmt"
 	"log"
@@ -55,7 +56,7 @@ func InitializeDB() error {
 	// Auto migrate models // TODO: add models here
 	err = dbcon.AutoMigrate(
 
-	// &models.User{},
+		&models.User{},
 	// &models.Log_err{},
 	// &models.Log_tracking_user{},
 	)

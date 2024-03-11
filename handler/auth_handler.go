@@ -36,32 +36,6 @@ func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	// // Generate token
-	// token, err := u.UserService.LoginUser(payload, c)
-	// if err != nil {
-	// 	return errs.NewBadRequestError(err.Error())
-	// }
-
-	// // Set cookie  "Remember Me" check box
-	// expires := time.Hour * 1 // Default expiration time
-	// if rememberMe := c.FormValue("remember"); rememberMe == "true" {
-	// 	expires = time.Hour * 24 // Extend expiration time for "Remember Me"
-	// }
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    token,
-	// 	Expires:  time.Now().Add(expires),
-	// 	HTTPOnly: true,
-	// })
-
-	// Set cookie
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    token,
-	// 	Expires:  time.Now().Add(time.Hour * 12),
-	// 	HTTPOnly: true,
-	// })
-
 	return c.JSON(fiber.Map{
 		"status": "success",
 		"token":  "token is generated",
@@ -88,15 +62,6 @@ func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 		database.LogInfoErr("LogoutUserHandler", err.Error())
 		return errs.NewBadRequestError(err.Error())
 	}
-
-	// // Set cookie
-	// cookie := fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    "",
-	// 	Expires:  time.Now().Add(-time.Hour),
-	// 	HTTPOnly: true,
-	// }
-	// c.Cookie(&cookie)
 
 	fmt.Println("User logged out successfully & Delete cookie")
 	database.UseTrackingLog(c.IP(), "Logout", 3)
