@@ -1,13 +1,13 @@
 package repositories
 
 import (
+	"MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
+	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
-	"MovieReviewAPIs/utility"
 	"errors"
 	"fmt"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 
 	// "github.com/golang-jwt/jwt"
@@ -22,128 +22,51 @@ func NewAccountRepository(db *gorm.DB) *accountUser {
 	return &accountUser{db: db}
 }
 func (u *accountUser) UserAccount(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-	fmt.Println("cookie: ", cookie)
 
-	config, err := utility.GetConfig()
-	if err != nil {
-		database.LogInfoErr("User", err.Error())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
-	}
-
-	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(config.JwtSecret), nil
-		})
-	fmt.Println("token: ", token)
-
+	token, err := authentication.VerifyAuth(c)
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("user", "unauthenticated")
-		return c.JSON(fiber.Map{
-			"message": "unauthenticated",
-			"error":   err.Error(),
-		})
+		database.LogInfoErr("UserAccount", "unauthenticated")
+		return err
 	}
 
-	if !token.Valid {
-		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("user", "invalid token")
-		return c.JSON(fiber.Map{
-			"message": "invalid token",
-		})
-	}
-
-	claims, ok := token.Claims.(*jwt.StandardClaims)
-	if !ok {
-		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("user", "invalid token claims")
-		return c.JSON(fiber.Map{
-			"message": "invalid token claims",
-		})
-	}
-
-	var userFromDB models.User
-	result := u.db.Where("id = ?", claims.Issuer).First(&userFromDB)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			c.Status(fiber.StatusNotFound)
-			return c.JSON(fiber.Map{
-				"message": "User not found",
-			})
-		}
-		c.Status(fiber.StatusInternalServerError)
-		database.LogInfoErr("user", "error retrieving user from database: "+result.Error.Error())
-		return c.JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
-	}
+	user, _ := database.GetUserFromToken(token)
 
 	database.UseTrackingLog(c.IP(), "User", 3)
 
-	return c.JSON(userFromDB)
+	return c.JSON(user)
 }
 
 func (u *accountUser) UsersAccountAll(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-	fmt.Println("cookie: ", cookie)
-
-	config, err := utility.GetConfig()
-	if err != nil {
-		database.LogInfoErr("User", err.Error())
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
-	}
-
-	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(config.JwtSecret), nil
-		})
-	fmt.Println("token: ", token)
-
+	token, err := authentication.VerifyAuth(c)
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("user", "unauthenticated")
-		return c.JSON(fiber.Map{
-			"message": "unauthenticated",
-			"error":   err.Error(),
-		})
+		database.LogInfoErr("UsersAccountAll", "unauthenticated")
+		return err
 	}
 
-	if !token.Valid {
-		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("user", "invalid token")
-		return c.JSON(fiber.Map{
-			"message": "invalid token",
-		})
+	user, err := database.GetUserFromToken(token)
+	if err != nil {
+		return err
 	}
-
-	_, ok := token.Claims.(*jwt.StandardClaims)
-	if !ok {
-		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("user", "invalid token claims")
-		return c.JSON(fiber.Map{
-			"message": "invalid token claims",
-		})
-	}
+	fmt.Println(user.Role)
 
 	var userFromDB []models.User
 	result := u.db.Find(&userFromDB)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			c.Status(fiber.StatusNotFound)
-			return c.JSON(fiber.Map{
-				"message": "User not found",
-			})
+			return errs.NewNotFoundError("Users not found. Error retrieving user from database")
 		}
 		c.Status(fiber.StatusInternalServerError)
 		database.LogInfoErr("user", "error retrieving user from database: "+result.Error.Error())
-		return c.JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
+		return errs.NewUnauthorizedError("Error retrieving user from database")
+	}
+
+	if *user.Role != "admin" {
+		c.Status(fiber.StatusUnauthorized)
+		database.LogInfoErr("UsersAccountAll", "unauthorized")
+		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
 	}
 
 	database.UseTrackingLog(c.IP(), "User", 3)

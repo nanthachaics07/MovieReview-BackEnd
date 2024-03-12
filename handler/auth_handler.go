@@ -1,6 +1,7 @@
 package handler
 
 import (
+	// "MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
@@ -55,6 +56,13 @@ func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
 }
 
 func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
+	// _, errorl := authentication.VerifyAuth(c)
+	// if errorl != nil {
+	// 	database.LogInfoErr("LogoutUserHandler", errorl.Error())
+	// 	return errs.NewUnexpectedError(errorl.Error())
+	// }
+
+	// user, err := database.GetUserFromToken(token)
 
 	err := u.UserService.LogoutUser(c)
 	if err != nil {

@@ -40,9 +40,9 @@ func InitRouterHeaderConfig(app *fiber.App) {
 
 	app.Use(cors.New(
 		cors.Config{
-			AllowOrigins:     fURL.FrontendURL,
-			AllowHeaders:     "Origin, Content-Type, Accept, Authorization", // Specify allowed headers for CORS
-			AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+			AllowOrigins: fURL.FrontendURL,
+			AllowHeaders: "Origin, Content-Type, Accept", // Specify allowed headers for CORS //, Authorization
+			// AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 			AllowCredentials: true, // Specify if credentials are allowed
 		},
 	))
@@ -66,9 +66,9 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 
 	// app.Use("/auth/logout", middlewares.AuthenticationRequired)
 	sub := app.Group("/auth")
-	sub.Post("/register", Uhandler.RegisterUserHandler)
-	sub.Post("/login", Uhandler.LoginUserHandler)
-	sub.Post("/logout", Uhandler.LogoutUserHandler)
+	sub.Post("/singup", Uhandler.RegisterUserHandler)
+	sub.Post("/singin", Uhandler.LoginUserHandler)
+	sub.Post("/singout", Uhandler.LogoutUserHandler)
 	// sup.Post("/logout", Uhandler.LogoutUserHandler)
 
 	acc := app.Group("/account")
@@ -79,7 +79,7 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	// acc.Delete("/", Uhandler.DeleteUserHandler)
 
 	// Main User Movie Router Group
-	app.Get("/home", Mhandler.GetMovieForHomePage)
+	app.Get("/", Mhandler.GetMovieForHomePage)
 	app.Get("/allmovies", middlewares.AuthMiddleware(), Mhandler.GetAllMovies)
 	app.Get("/movie/:id", Mhandler.GetMovieByID)
 

@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
+
+	// "os"
 	"time"
 
 	"MovieReviewAPIs/database"
@@ -11,34 +12,12 @@ import (
 	"MovieReviewAPIs/repositories"
 	"MovieReviewAPIs/router"
 	"MovieReviewAPIs/services"
-	_ "MovieReviewAPIs/utility"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv"
 )
 
-// Set timezone BKK
-func initTimeZone() {
-	ict, err := time.LoadLocation("Asia/Bangkok")
-	if err != nil {
-		panic(err)
-	} else if ict.String() != "Asia/Bangkok" {
-		log.Fatal("Timezone is not UTC+7 BKK")
-	}
-	fmt.Println("Timezone: ", ict)
-
-	time.Local = ict
-}
-
 func main() { // Do not delete any line in this func if U won't check each file
-
-	//TODO: Delete this config if U Not Funny
-	// Tell Me Who Handsome
-	errs := godotenv.Load("startup.env")
-	if errs != nil {
-		log.Fatalf("Error loading .env file: %v", errs)
-	}
-	os.Getenv("Secret_Load")
 
 	// Initialize timezone
 	initTimeZone()
@@ -76,4 +55,17 @@ func main() { // Do not delete any line in this func if U won't check each file
 	// Start Fiber server (port)
 	router.RouterPortListener(app)
 
+}
+
+// Set timezone BKK
+func initTimeZone() {
+	ict, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		panic(err)
+	} else if ict.String() != "Asia/Bangkok" {
+		log.Fatal("Timezone is not UTC+7 BKK")
+	}
+	fmt.Println("Timezone: ", ict)
+
+	time.Local = ict
 }

@@ -2,7 +2,16 @@ package repositories
 
 import (
 	"MovieReviewAPIs/database"
+
+	// "MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
+
+	// "reflect"
+
+	// "github.com/dgrijalva/jwt-go"
+	// "github.com/gofiber/fiber/v2"
+
+	// jwt "github.com/golang-jwt/jwt"
 
 	"gorm.io/gorm"
 )
@@ -49,11 +58,13 @@ func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.Movies, error
 }
 
 func (r *movieRepository) FindMovieByID(id uint) (*models.Movies, error) {
+
 	var movie models.Movies
 	if err := r.db.First(&movie, id).Error; err != nil {
 		database.LogInfoErr("FindMovieByID", err.Error())
 		return nil, err
 	}
+
 	return &movie, nil
 }
 
