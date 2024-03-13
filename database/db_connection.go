@@ -1,6 +1,8 @@
 package database
 
 import (
+	"MovieReviewAPIs/models"
+	"MovieReviewAPIs/utility"
 	"fmt"
 	"log"
 	"os"
@@ -9,8 +11,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	"MovieReviewAPIs/utility"
 )
 
 var DB *gorm.DB
@@ -19,6 +19,7 @@ func InitializeDB() error {
 	// Connect to PostgreSQL database
 	config, err := utility.GetConfig()
 	if err != nil {
+		LogInfoErr("InitializeDB", err.Error())
 		log.Fatalf("Error getting config: %v", err)
 	}
 
@@ -37,11 +38,13 @@ func InitializeDB() error {
 		Logger: newLogger,
 	})
 	if err != nil {
+		LogInfoErr("InitializeDB", err.Error())
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
 	sqlDB, err := dbcon.DB()
 	if err != nil {
+		LogInfoErr("InitializeDB", err.Error())
 		fmt.Println("Connected to database Because: ", err)
 		defer sqlDB.Close()
 	}
@@ -53,21 +56,25 @@ func InitializeDB() error {
 	// Auto migrate models // TODO: add models here
 	err = dbcon.AutoMigrate(
 
-	// &models.User{},
+		&models.User{},
+	// &models.Log_err{},
+	// &models.Log_tracking_user{},
 	)
 	if err != nil {
+		LogInfoErr("InitializeDB", err.Error())
 		log.Fatalf("Error migrating models: %v", err)
 	}
 
-	settingDB()
+	settingDBConnection()
 
 	return nil
 }
 
-func settingDB() {
+func settingDBConnection() {
 	// Get the underlying *sql.DB instance
 	sqlDB, err := DB.DB()
 	if err != nil {
+		LogInfoErr("settingDB", err.Error())
 		log.Fatalf("Error getting underlying *sql.DB: %v", err)
 	}
 
@@ -86,6 +93,7 @@ func settingDB() {
 	// Ping the database
 	err = sqlDB.Ping()
 	if err != nil {
+		LogInfoErr("settingDB", err.Error())
 		log.Fatalf("Error pinging database: %v", err)
 	}
 

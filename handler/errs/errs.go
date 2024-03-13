@@ -68,3 +68,10 @@ func NewConflictError(message string) error {
 		Messesage: message,
 	}
 }
+
+func NewInternalServerError(message string) error {
+	return AppError{
+		Code:      fiber.StatusInternalServerError,
+		Messesage: message,
+	}
+}
