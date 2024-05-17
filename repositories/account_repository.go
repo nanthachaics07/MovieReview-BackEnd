@@ -65,3 +65,11 @@ func (u *accountUser) GetuserByID(c *fiber.Ctx, id uint) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func (u *accountUser) UpdateUserByID(c *fiber.Ctx, id uint) (*models.User, error) {
+	return nil, nil
+}
+
+func (u *accountUser) DeleteUserByID(c *fiber.Ctx, id uint) error {
+	return nil
+}
