@@ -17,7 +17,7 @@ type JwtCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func AuthMiddleware() fiber.Handler {
+func AuthMiddleware() fiber.Handler { //TODO: fix this cookie can't set in header on react 18 beta:
 	return func(c *fiber.Ctx) error {
 		// Get JWT token from the cookie
 		cookie := c.Cookies("jwt")
@@ -48,9 +48,7 @@ func AuthMiddleware() fiber.Handler {
 		// Check if the token is valid
 		if claims, ok := token.Claims.(*JwtCustomClaims); ok && token.Valid {
 			fmt.Println("claims: ", claims)
-			// You can access claims.UserID to get the user ID, for example:
-			// userID := claims.UserID
-			// Proceed with the request
+			fmt.Println("claims.UserID: ", claims.UserID)
 			return c.Next()
 		} else {
 			return errs.NewUnauthorizedError("Invalid token")
