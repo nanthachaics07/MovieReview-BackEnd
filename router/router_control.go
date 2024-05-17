@@ -60,27 +60,28 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	// Create value Sub Router Group
 	// Admin Setting Movie Review Router Group
 	admin := app.Group("/admin")
-	admin.Post("/movie", Mhandler.CreateMovie)
-	admin.Put("/movie/:id", Mhandler.UpdateMovie)
-	admin.Delete("/movie/:id", Mhandler.DeleteMovie)
+	admin.Post("/createmovie", Mhandler.CreateMovie)
+	admin.Put("/updatemovie/:id", Mhandler.UpdateMovieByID)
+	admin.Delete("/deletemovie/:id", Mhandler.DeleteMovie)
+	admin.Get("/user/:id", middlewares.MiddlewareDeserializeRout, Ahandler.GetUserByIDHandler)
+	admin.Get("/users", middlewares.MiddlewareDeserializeRout, Ahandler.UsersAccountAllHandler)
 
 	// app.Use("/auth/logout", middlewares.AuthenticationRequired)
 	sub := app.Group("/auth")
 	sub.Post("/singup", Uhandler.RegisterUserHandler)
 	sub.Post("/singin", Uhandler.LoginUserHandler)
-	sub.Post("/singout", Uhandler.LogoutUserHandler)
+	sub.Post("/singout", middlewares.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
 	// sup.Post("/logout", Uhandler.LogoutUserHandler)
 
 	acc := app.Group("/account")
 	acc.Get("/user", Ahandler.UserAccountHandler)
-	acc.Get("/user/:id", Ahandler.UserAccountHandler)
-	acc.Get("/users", middlewares.AuthMiddleware(), Ahandler.UsersAccountAllHandler)
+
 	// acc.Patch("/", Uhandler.UpdateUserHandler)
 	// acc.Delete("/", Uhandler.DeleteUserHandler)
 
 	// Main User Movie Router Group
 	app.Get("/", Mhandler.GetMovieForHomePage)
-	app.Get("/allmovies", middlewares.AuthMiddleware(), Mhandler.GetAllMovies)
+	app.Get("/allmovies", Mhandler.GetAllMovies)
 	app.Get("/movie/:id", Mhandler.GetMovieByID)
 
 	/*

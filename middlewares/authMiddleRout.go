@@ -1,180 +1,145 @@
 package middlewares
 
 import (
-	"MovieReviewAPIs/database"
-	"MovieReviewAPIs/handler/errs"
+	// "MovieReviewAPIs/database"
+	// "MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/utility"
 	"fmt"
-	"strings"
+
+	// "strings"
 
 	"github.com/gofiber/fiber/v2"
 	// "github.com/gofiber/fiber/middleware"
 	"github.com/golang-jwt/jwt"
-
-	jwtware "github.com/gofiber/jwt/v3"
+	// jwtware "github.com/gofiber/jwt/v3"
 )
 
-func TokenValidator(c *fiber.Ctx) error {
-	// Extract token from response headers
-	tokenCookie := c.Cookies("jwt")
-	fmt.Println("tokenCookie: ", tokenCookie)
-	if tokenCookie == "" {
-		return errs.NewUnauthorizedError("Missing token")
-	}
+// func MiddlewareDeserializeRout(c *fiber.Ctx) error {
+// 	var tokenString string
 
-	// Parse the token
-	token, err := jwt.Parse(tokenCookie, func(token *jwt.Token) (interface{}, error) {
-		configJ, err := utility.GetConfig()
-		fmt.Println("configJ: ", configJ)
+// 	// Try to get the token from the Authorization header
+// 	authorization := c.Get("Authorization")
+// 	if strings.HasPrefix(authorization, "Bearer ") {
+// 		tokenString = strings.TrimPrefix(authorization, "Bearer ")
+// 		fmt.Println("Token from Authorization header: ", tokenString)
+// 	} else {
+// 		// Fallback to check the jwt cookie
+// 		// Try to get the token from Set-Cookie header
+// 		setCookie := c.GetRespHeader("Set-Cookie")
+// 		fmt.Println("Set-Cookie from Fiber cookie: ", setCookie)
+// 		if setCookie != "" {
+// 			// Parse the Set-Cookie header to extract the jwt token
+// 			cookieParts := strings.Split(setCookie, ";")
+// 			for _, part := range cookieParts {
+// 				if strings.HasPrefix(part, "jwt=") {
+// 					tokenString = strings.TrimPrefix(part, "jwt=")
+// 					fmt.Println("Token from Fiber cookie: ", tokenString)
+// 					break
+// 				}
+// 			}
+// 		}
 
-		if err != nil {
-			database.LogInfoErr("AuthenticationRequired", err.Error())
-			fmt.Println("Error getting config: ", err)
-		}
-		// Check the signing method
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errs.NewUnauthorizedError("Invalid token")
-		}
-		// Provide your JWT secret here
-		return []byte(configJ.JwtSecret), nil
-	})
-	if err != nil {
-		return errs.NewUnauthorizedError("Invalid token")
-	}
+// 		if tokenString == "" {
+// 			tokenString = c.Cookies("jwt")
+// 		}
+// 		fmt.Println("Token from cookie: ", tokenString)
+// 	}
 
-	// Check if the token is valid
-	if !token.Valid {
-		return errs.NewUnauthorizedError("Invalid token")
-	}
+// 	// If no token is found, return an unauthorized error
+// 	if tokenString == "" {
+// 		fmt.Println("No token found")
+// 		database.LogInfoErr("MiddlewareDeserializeRout", "You are not logged in")
+// 		return errs.NewUnauthorizedError("You are not logged in")
+// 	}
 
-	// Extract claims
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return errs.NewUnauthorizedError("Invalid token claims")
-	}
+// 	// Retrieve the configuration
+// 	config, err := utility.GetConfig()
+// 	if err != nil {
+// 		database.LogInfoErr("MiddlewareDeserializeRout", "Error getting config")
+// 		fmt.Println("Error getting config: ", err)
+// 		return err
+// 	}
 
-	// You can perform additional checks on claims if needed
+// 	// Parse and validate the token
+// 	tokenByte, err := jwt.Parse(tokenString, func(jwtToken *jwt.Token) (interface{}, error) {
+// 		if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
+// 			database.LogInfoErr("MiddlewareDeserializeRout", "Unexpected signing method")
+// 			return nil, fmt.Errorf("unexpected signing method: %s", jwtToken.Header["alg"])
+// 		}
+// 		return []byte(config.JwtSecret), nil
+// 	})
 
-	// Set user ID from claims to context for later use
-	c.Locals("userID", claims["sub"])
+// 	if err != nil {
+// 		database.LogInfoErr("MiddlewareDeserializeRout", "Error parsing token in Header")
+// 		fmt.Println("Error parsing token in Header: ", err)
+// 		return errs.NewUnauthorizedError("Invalid token")
+// 	}
 
-	// Token is valid, proceed to next handler
-	return c.Next()
-}
+// 	// Validate the token claims
+// 	_, ok := tokenByte.Claims.(jwt.MapClaims)
+// 	if !ok || !tokenByte.Valid {
+// 		database.LogInfoErr("MiddlewareDeserializeRout", "Claims are not valid")
+// 		return errs.NewUnauthorizedError("Claims are not valid")
+// 	}
 
-func AuthRequ() func(*fiber.Ctx) error {
-	configJ, err := utility.GetConfig()
-	fmt.Println("configJ: ", configJ)
+// 	// ย้ายลง DB :  Implement user retrieval and validation if necessary
+// 	// var user models.User
+// 	// err = database.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"])).Error
+// 	// if err != nil {
+// 	// 	database.LogInfoErr("MiddlewareDeserializeRout", "The user belonging to this token no longer exists")
+// 	// 	return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "fail", "message": "The user belonging to this token no longer exists"})
+// 	// }
 
-	if err != nil {
-		database.LogInfoErr("AuthenticationRequired", err.Error())
-		fmt.Println("Error getting config: ", err)
-	}
-	return jwtware.New(jwtware.Config{
-		SigningKey: []byte(configJ.JwtSecret),
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"message": "Unauthorized",
-			})
-		},
-	})
-}
+// 	// Attach user information to the context if needed
+// 	// c.Locals("user", models.FilterUserRecord(&user))
 
-func AuthenticationRequired(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-	fmt.Println("cookie: ", cookie)
-
-	configJ, err := utility.GetConfig()
-	fmt.Println("configJ: ", configJ)
-
-	if err != nil {
-		database.LogInfoErr("AuthenticationRequired", err.Error())
-		fmt.Println("Error getting config: ", err)
-	}
-	token, err := jwt.ParseWithClaims(cookie, &jwt.MapClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(configJ.JwtSecret), nil
-		})
-
-	fmt.Println("token: ", token)
-
-	if err != nil || !token.Valid {
-		fmt.Println("Error validating token: ", err)
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized token Validation",
-		})
-	}
-	claims, ok := token.Claims.(*jwt.MapClaims)
-	if !ok {
-		fmt.Println("Error parsing claims: ", err)
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized token claims",
-		})
-	}
-	fmt.Println(claims)
-	return c.Next()
-}
+// 	return c.Next()
+// }
 
 func MiddlewareDeserializeRout(c *fiber.Ctx) error {
-	var tokenString string
-	// authorization := c.GetRespHeader("Set-Cookie")
-	authorization := c.Get("Authorization")
-	fmt.Println("authorization c.Get: ", authorization)
-
-	if strings.HasPrefix(authorization, "jwt=") {
-		tokenString = strings.TrimPrefix(authorization, "JWT=")
-		fmt.Println("tokenString (-Bearer): ", tokenString)
-	} else if c.Cookies("jwt") != "" {
-		tokenString = c.Cookies("jwt")
-		fmt.Println("tokenString: ", tokenString)
-	}
+	tokenString := c.Cookies("jwt")
+	// tokenString := c.GetRespHeader("Set-Cookie")
+	fmt.Println("Set-Cookie from Fiber cookie: ", tokenString)
+	// if tokenString != "" {
+	// 	// Parse the Set-Cookie header to extract the jwt token
+	// 	cookieParts := strings.Split(tokenString, ";")
+	// 	for _, part := range cookieParts {
+	// 		if strings.HasPrefix(part, "jwt=") {
+	// 			tokenString = strings.TrimPrefix(part, "jwt=")
+	// 			fmt.Println("Token from Fiber cookie: ", tokenString)
+	// 			break
+	// 		}
+	// 	}
+	// }
 
 	if tokenString == "" {
-		fmt.Println("tokenString: ", tokenString)
-		database.LogInfoErr("MiddlewareDeserializeRout", "You are not logged in")
-		return errs.NewUnauthorizedError("#.Empty token in UR Browser.# You are not logged in")
+		fmt.Println("No token found in cookies")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "You are not logged in"})
 	}
 
 	config, err := utility.GetConfig()
 	if err != nil {
-		database.LogInfoErr("MiddlewareDeserializeRout", "Error getting config")
 		fmt.Println("Error getting config: ", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Config error"})
 	}
 
 	tokenByte, err := jwt.Parse(tokenString, func(jwtToken *jwt.Token) (interface{}, error) {
-		if JWM, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
-
-			fmt.Println("JWM: ", JWM)
-			database.LogInfoErr("MiddlewareDeserializeRout", "unexpected signing method")
+		if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %s", jwtToken.Header["alg"])
 		}
 		return []byte(config.JwtSecret), nil
 	})
-	fmt.Printf("tokenByte: %v", tokenByte)
 
-	if err != nil {
-		database.LogInfoErr("MiddlewareDeserializeRout", "Error parsing token in Header")
-		fmt.Println("Error parsing token in Header: ", err)
-		return errs.NewUnauthorizedError("invalid token")
+	if err != nil || !tokenByte.Valid {
+		fmt.Println("Error parsing token: ", err)
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token"})
 	}
 
-	_, ok := tokenByte.Claims.(jwt.MapClaims)
-	// claims, ok := tokenByte.Claims.(jwt.MapClaims)
-	if !ok || !tokenByte.Valid {
-		database.LogInfoErr("MiddlewareDeserializeRout", "Claims are not valid")
-		return errs.NewUnauthorizedError("Claims are not valid")
-
+	claims, ok := tokenByte.Claims.(jwt.MapClaims)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token claims"})
 	}
 
-	// var user models.User
-	// database.DB.First(&user, "id = ?", fmt.Sprint(claims["sub"]))
-
-	// if user.ID.String() != claims["sub"] {
-	// 	database.LogInfoErr("MiddlewareDeserializeRout", "the user belonging to this token no logger exists")
-	// 	return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "fail", "message": "the user belonging to this token no logger exists"})
-	// }
-
-	// c.Locals("user", models.FilterUserRecord(&user))
-
+	c.Locals("user", claims)
 	return c.Next()
 }

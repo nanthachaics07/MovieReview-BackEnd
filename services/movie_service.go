@@ -1,6 +1,7 @@
 package services
 
 import (
+	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/repositories"
 )
@@ -15,26 +16,60 @@ func NewMovieService(movieRepository repositories.MovieRepository) *movieService
 	}
 }
 
-func (s *movieService) GetAllMovies() ([]models.Movies, error) {
-	return s.MovieRepository.GetAllMovies()
+func (s *movieService) GetAllMovies(users *models.User) ([]models.Movies, error) { //fix business logic
+	// Check user role
+	if users.Role != nil && *users.Role != "admin" {
+		return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	}
+	getAllMovieRes, err := s.MovieRepository.GetAllMovies()
+	if err != nil {
+		return nil, err
+	}
+	return getAllMovieRes, nil
 }
 
 func (s *movieService) GetMovieEachFieldForHomePage() ([]models.Movies, error) {
-	return s.MovieRepository.GetMovieEachFieldForHomePage()
+	homePage, err := s.MovieRepository.GetMovieEachFieldForHomePage()
+	if err != nil {
+		return nil, err
+	}
+	return homePage, nil
 }
 
-func (s *movieService) GetMovieByID(id uint) (*models.Movies, error) {
-	return s.MovieRepository.FindMovieByID(id)
+func (s *movieService) GetMovieByID(users *models.User, id uint) (*models.Movies, error) {
+	// Check user role
+	if users.Role != nil && *users.Role != "admin" {
+		return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	}
+	ifndMovie, err := s.MovieRepository.FindMovieByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return ifndMovie, nil
 }
 
-func (s *movieService) CreateMovie(movie *models.Movies) error {
-	return s.MovieRepository.CreateMovie(movie)
+func (s *movieService) CreateMovie(user *models.User) error {
+	if user.Role != nil && *user.Role != "admin" {
+		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	}
+	movie := new(models.Movies)
+	createMovieErr := s.MovieRepository.CreateMovie(movie)
+	return createMovieErr
 }
 
-func (s *movieService) UpdateMovie(movie *models.Movies) error {
-	return s.MovieRepository.UpdateMovieByID(movie)
+func (s *movieService) UpdateMovieByID(user *models.User, id uint) error {
+	if user.Role != nil && *user.Role != "admin" {
+		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	}
+	movie := new(models.Movies)
+	updateMovie := s.MovieRepository.UpdateMovieByID(movie, id)
+	return updateMovie
 }
 
-func (s *movieService) DeleteMovieByID(id uint) error {
-	return s.MovieRepository.DeleteMovieByID(id)
+func (s *movieService) DeleteMovieByID(user *models.User, id uint) error {
+	if user.Role != nil && *user.Role != "admin" {
+		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	}
+	deleteMovie := s.MovieRepository.DeleteMovieByID(id)
+	return deleteMovie
 }

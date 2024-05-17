@@ -7,6 +7,6 @@ type MovieRepository interface {
 	GetAllMovies() ([]models.Movies, error)
 	GetMovieEachFieldForHomePage() ([]models.Movies, error)
 	FindMovieByID(id uint) (*models.Movies, error)
-	UpdateMovieByID(movie *models.Movies) error
+	UpdateMovieByID(movie *models.Movies, id uint) error
 	DeleteMovieByID(id uint) error
 }

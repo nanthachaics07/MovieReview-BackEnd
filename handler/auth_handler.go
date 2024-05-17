@@ -2,6 +2,7 @@ package handler
 
 import (
 	// "MovieReviewAPIs/authentication"
+	"MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
@@ -12,10 +13,10 @@ import (
 )
 
 type UserHandler struct {
-	UserService services.UserService
+	UserService services.AuthService
 }
 
-func NewUserHandler(userService services.UserService) *UserHandler {
+func NewUserHandler(userService services.AuthService) *UserHandler {
 	return &UserHandler{
 		UserService: userService,
 	}
@@ -37,10 +38,12 @@ func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(fiber.Map{
-		"status": "success",
-		"token":  "token is generated",
-	})
+	// return c.JSON(fiber.Map{
+	// 	"status": "success",
+	// 	"token":  "token is generated",
+	// })
+
+	return c.JSON(fiber.Map{"status": "success", "token": "token is generated"})
 }
 
 func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
@@ -56,11 +59,11 @@ func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
 }
 
 func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
-	// _, errorl := authentication.VerifyAuth(c)
-	// if errorl != nil {
-	// 	database.LogInfoErr("LogoutUserHandler", errorl.Error())
-	// 	return errs.NewUnexpectedError(errorl.Error())
-	// }
+	_, errorl := authentication.VerifyAuth(c)
+	if errorl != nil {
+		database.LogInfoErr("LogoutUserHandler", errorl.Error())
+		return errs.NewUnexpectedError(errorl.Error())
+	}
 
 	// user, err := database.GetUserFromToken(token)
 

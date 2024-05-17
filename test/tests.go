@@ -21,7 +21,7 @@ func TestAdd(t *testing.T) {
 
 // }
 
-func FindMovieByID(id uint, c *fiber.Ctx) (*models.Movies, error) {
+func MockFindMovieByID(id uint, c *fiber.Ctx) (*models.Movies, error) {
 	_, err := authentication.VerifyAuth(c)
 	if err != nil {
 		database.LogInfoErr("FindMovieByID", err.Error())

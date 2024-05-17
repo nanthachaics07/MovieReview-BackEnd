@@ -68,8 +68,10 @@ func (r *movieRepository) FindMovieByID(id uint) (*models.Movies, error) {
 	return &movie, nil
 }
 
-func (r *movieRepository) UpdateMovieByID(movie *models.Movies) error {
-	if err := r.db.Save(movie).Error; err != nil {
+func (r *movieRepository) UpdateMovieByID(movie *models.Movies, id uint) error {
+	movie.ID = id
+	// Use Model
+	if err := r.db.Model(&models.Movies{}).Where("id = ?", id).Updates(movie).Error; err != nil {
 		database.LogInfoErr("UpdateMovieByID", err.Error())
 		return err
 	}
