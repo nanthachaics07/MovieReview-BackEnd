@@ -20,23 +20,24 @@ func NewAccountHandler(accountService services.AccountService) *AccountHandler {
 }
 
 func (h *AccountHandler) UserAccountHandler(c *fiber.Ctx) error {
-	// token, err := authentication.VerifyAuth(c)
-	// if err != nil {
-	// 	c.Status(fiber.StatusUnauthorized)
-	// 	database.LogInfoErr("GetuserByID", "unauthenticated")
-	// 	return err
-	// }
-
-	// _, err = database.GetUserFromToken(token)
-	// if err != nil {
-	// 	return err
-	// }
-	payload := h.AccountService.UserAccount(c)
-
-	if payload != nil {
-		return c.JSON(payload)
+	token, err := authentication.VerifyAuth(c)
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		database.LogInfoErr("GetuserByID", "unauthenticated")
+		return err
 	}
-	return nil
+
+	user, err := database.GetUserFromToken(token)
+	if err != nil {
+		return err
+	}
+
+	payload, err := h.AccountService.UserAccount(c, user)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(payload)
 }
 
 func (h *AccountHandler) UsersAccountAllHandler(c *fiber.Ctx) error {

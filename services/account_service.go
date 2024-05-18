@@ -18,8 +18,26 @@ func NewAccountService(accountRepositoty repositories.AccountRepository) *accoun
 	return &accountService{AccountRepository: accountRepositoty}
 }
 
-func (s *accountService) UserAccount(c *fiber.Ctx) error {
-	return s.AccountRepository.UserAccount(c)
+func (s *accountService) UserAccount(c *fiber.Ctx, user *models.User) (*models.User, error) {
+	// if user.Role != nil && *user.Role != "admin" || *user.Role != "user" {
+	// 	return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	// }
+	uid := user.ID
+	userFromDB, err := s.AccountRepository.UserAccount(c, uid)
+	if err != nil {
+		return nil, err
+	}
+
+	var userAcc = models.User{
+		DeletedAt: userFromDB.DeletedAt,
+		Email:     userFromDB.Email,
+		Name:      userFromDB.Name,
+		Role:      userFromDB.Role,
+		Verified:  userFromDB.Verified,
+	}
+	database.UseTrackingLog(c.IP(), "User", 3)
+
+	return &userAcc, nil
 }
 
 func (s *accountService) UsersAccountAll(c *fiber.Ctx, user *models.User) ([]models.User, error) {

@@ -48,8 +48,8 @@ func (r *movieRepository) GetAllMovies() ([]models.Movies, error) {
 	return movies, nil
 }
 
-func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.Movies, error) {
-	var movies []models.Movies
+func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.MovieOnHomePage, error) {
+	var movies []models.MovieOnHomePage
 	if err := r.db.Table("movies").Select("id, title, release_date, mpaa, image_url").Find(&movies).Error; err != nil {
 		database.LogInfoErr("GetMovieEachFieldForHomePage", err.Error())
 		return movies, err
@@ -78,8 +78,9 @@ func (r *movieRepository) UpdateMovieByID(movie *models.Movies, id uint) error {
 	return nil
 }
 
-func (r *movieRepository) DeleteMovieByID(id uint) error {
-	if err := r.db.Delete(&models.Movies{}, id).Error; err != nil {
+func (r *movieRepository) DeleteMovieByID(movie *models.Movies, id uint) error {
+	movie.ID = id
+	if err := r.db.Delete(&models.Movies{}).Where("id = ?", id).Error; err != nil {
 		database.LogInfoErr("DeleteMovieByID", err.Error())
 		return err
 	}

@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/models"
 
@@ -18,23 +17,15 @@ type accountUser struct {
 func NewAccountRepository(db *gorm.DB) *accountUser {
 	return &accountUser{db: db}
 }
-func (u *accountUser) UserAccount(c *fiber.Ctx) error {
+func (u *accountUser) UserAccount(c *fiber.Ctx, uid uint) (*models.User, error) {
 
-	token, err := authentication.VerifyAuth(c)
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		database.LogInfoErr("UserAccount", "unauthenticated")
-		return err
+	var user models.User
+	if err := u.db.Where("id = ?", uid).First(&user).Error; err != nil {
+		return nil, err
 	}
-
-	user, err := database.GetUserFromToken(token)
-	if err != nil {
-		return err
-	}
-
 	database.UseTrackingLog(c.IP(), "User", 3)
 
-	return c.JSON(user)
+	return &user, nil
 }
 
 func (u *accountUser) UsersAccountAll(c *fiber.Ctx) ([]models.User, error) {
