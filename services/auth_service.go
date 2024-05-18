@@ -16,13 +16,16 @@ func NewUserService(userRepository repositories.UserRepository) *userService {
 }
 
 func (u *userService) LoginUser(payload *models.SignInInput, c *fiber.Ctx) error {
-	return u.UserRepository.LoginUser(payload, c)
+	loginUser := u.UserRepository.LoginUser(payload, c)
+	return loginUser
 }
 
 func (u *userService) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {
-	return u.UserRepository.RegisterUser(payload, c)
+	registerUser := u.UserRepository.RegisterUser(payload, c)
+	return registerUser
 }
 
 func (u *userService) LogoutUser(c *fiber.Ctx) error {
-	return u.UserRepository.LogoutUser(c)
+	logoutUser := u.UserRepository.LogoutUser(c)
+	return logoutUser
 }

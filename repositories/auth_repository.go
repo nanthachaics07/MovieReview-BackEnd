@@ -5,7 +5,9 @@ import (
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
+	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,6 +56,11 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 		return errs.NewBadRequestError(result.Error.Error())
 	}
 
+	if user.ID == 0 {
+		database.LogInfoErr("LoginUser", "User not found")
+		return errs.NewBadRequestError("User not found")
+	}
+
 	// compare hashed password
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password),
 		[]byte(payload.Password))
@@ -70,18 +77,33 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 	}
 	// generate token
 	jwtSecretKey := config.JwtSecret
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"sub": user.ID,
-			"exp": time.Now().Add(time.Hour * 72).Unix(),
-			"iat": time.Now().Unix(),
-			"nbf": time.Now().Unix(),
-		})
+	// token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+	// 	jwt.MapClaims{
+	// 		"sub": user.ID,
+	// 		"exp": time.Now().Add(time.Hour * 72).Unix(),
+	// 		"iat": time.Now().Unix(),
+	// 		"nbf": time.Now().Unix(),
+	// 	})
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    strconv.Itoa(int(user.ID)),
+		ExpiresAt: time.Now().Add(time.Hour * 1).Unix(), // 1 hour
+		// IssuedAt:  time.Now().Unix(),
+		// NotBefore: time.Now().Unix(),
+		// Subject:   user.Email,
+		// Audience:  []string{"localhost"},
+	})
+
 	tokenStringVerify, err := token.SignedString([]byte(jwtSecretKey))
 	if err != nil {
 		database.LogInfoErr("LoginUser", err.Error())
 		return errs.NewBadgatewayError(err.Error())
 	}
+	fmt.Println("tokenStringVerify: ", tokenStringVerify)
+
+	// Set the token in the Authorization header
+	// c.Set("Authorization", "Bearer "+tokenStringVerify)
+	// fmt.Println("tokenStringVerify After c.Set: ", tokenStringVerify)
 
 	// Set cookie  "Remember Me" check box
 	expires := time.Hour * 1 // Default expiration time
@@ -91,26 +113,27 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 
 	// const setDoman = "localhost" //TODO: 	fix move to .env
 	c.Cookie(&fiber.Cookie{
-		Name:     "jwt",
-		Value:    tokenStringVerify,
-		Path:     "/",
+		Name:  "jwt",
+		Value: tokenStringVerify,
+		// Path:     "/",
 		Expires:  time.Now().Add(expires),
 		HTTPOnly: true,
-		// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
-		// Domain:   setDoman,
+		// 	// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
+		// 	// Domain:   setDoman,
 	})
-
-	// fiberS.c.Cookie(&fiber.Cookie{
+	// c.Cookie(&fiber.Cookie{
 	// 	Name:     "jwt",
-	// 	Value:    tokenString,
-	// 	Expires:  time.Now().Add(time.Hour * 72),
+	// 	Value:    tokenStringVerify,
+	// 	Expires:  time.Now().Add(expires),
 	// 	HTTPOnly: true,
+	// 	Secure:   false, // Set to true if using HTTPS
+	// 	Path:     "/",
+	// 	SameSite: "Lax",
 	// })
 
 	database.UseTrackingLog(user.Email, "Login", 1)
 
 	return nil
-
 }
 
 func (r *userRepository) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {
@@ -180,7 +203,19 @@ func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
 		Expires:  expired,
 		HTTPOnly: true,
 	})
+	// // Remove the cookie
+	// c.Cookie(&fiber.Cookie{
+	// 	Name:     "jwt",
+	// 	Value:    "",
+	// 	Expires:  expired,
+	// 	HTTPOnly: true,
+	// 	Secure:   false,
+	// 	Path:     "/",
+	// 	SameSite: "Lax",
+	// })
 
-	database.UseTrackingLog(c.IP(), "Logout", 3)
+	// database.UseTrackingLog(c.IP(), "Logout", 3)
+	// Return a success response
+	// return c.SendStatus(fiber.StatusOK)
 	return nil
 }

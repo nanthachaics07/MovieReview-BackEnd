@@ -1,12 +1,14 @@
 package services
 
-import "MovieReviewAPIs/models"
+import (
+	"MovieReviewAPIs/models"
+)
 
 type MovieService interface {
-	GetAllMovies() ([]models.Movies, error)
-	GetMovieByID(id uint) (*models.Movies, error)
-	GetMovieEachFieldForHomePage() ([]models.Movies, error)
-	CreateMovie(movie *models.Movies) error
-	UpdateMovie(movie *models.Movies) error
-	DeleteMovieByID(id uint) error
+	GetAllMovies(user *models.User) ([]models.Movies, error)
+	GetMovieByID(user *models.User, id uint) (*models.Movies, error)
+	GetMovieEachFieldForHomePage() ([]models.MovieOnHomePage, error)
+	CreateMovie(user *models.User) error
+	UpdateMovieByID(user *models.User, id uint) error
+	DeleteMovieByID(user *models.User, id uint) error
 }

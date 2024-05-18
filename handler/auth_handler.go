@@ -1,6 +1,8 @@
 package handler
 
 import (
+	// "MovieReviewAPIs/authentication"
+	"MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
@@ -11,10 +13,10 @@ import (
 )
 
 type UserHandler struct {
-	UserService services.UserService
+	UserService services.AuthService
 }
 
-func NewUserHandler(userService services.UserService) *UserHandler {
+func NewUserHandler(userService services.AuthService) *UserHandler {
 	return &UserHandler{
 		UserService: userService,
 	}
@@ -36,36 +38,12 @@ func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	// // Generate token
-	// token, err := u.UserService.LoginUser(payload, c)
-	// if err != nil {
-	// 	return errs.NewBadRequestError(err.Error())
-	// }
-
-	// // Set cookie  "Remember Me" check box
-	// expires := time.Hour * 1 // Default expiration time
-	// if rememberMe := c.FormValue("remember"); rememberMe == "true" {
-	// 	expires = time.Hour * 24 // Extend expiration time for "Remember Me"
-	// }
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    token,
-	// 	Expires:  time.Now().Add(expires),
-	// 	HTTPOnly: true,
+	// return c.JSON(fiber.Map{
+	// 	"status": "success",
+	// 	"token":  "token is generated",
 	// })
 
-	// Set cookie
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    token,
-	// 	Expires:  time.Now().Add(time.Hour * 12),
-	// 	HTTPOnly: true,
-	// })
-
-	return c.JSON(fiber.Map{
-		"status": "success",
-		"token":  "token is generated",
-	})
+	return c.JSON(fiber.Map{"status": "success", "token": "token is generated"})
 }
 
 func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
@@ -81,6 +59,13 @@ func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
 }
 
 func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
+	_, errorl := authentication.VerifyAuth(c)
+	if errorl != nil {
+		database.LogInfoErr("LogoutUserHandler", errorl.Error())
+		return errs.NewUnexpectedError(errorl.Error())
+	}
+
+	// user, err := database.GetUserFromToken(token)
 
 	err := u.UserService.LogoutUser(c)
 	if err != nil {
@@ -89,16 +74,8 @@ func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 		return errs.NewBadRequestError(err.Error())
 	}
 
-	// // Set cookie
-	// cookie := fiber.Cookie{
-	// 	Name:     "jwt",
-	// 	Value:    "",
-	// 	Expires:  time.Now().Add(-time.Hour),
-	// 	HTTPOnly: true,
-	// }
-	// c.Cookie(&cookie)
-
 	fmt.Println("User logged out successfully & Delete cookie")
+	database.UseTrackingLog(c.IP(), "Logout", 3)
 
 	return c.JSON(fiber.Map{
 		"status":  "success",
