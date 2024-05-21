@@ -40,9 +40,9 @@ func InitRouterHeaderConfig(app *fiber.App) {
 
 	app.Use(cors.New(
 		cors.Config{
-			AllowOrigins: fURL.FrontendURL,
-			AllowHeaders: "Origin, Content-Type, Accept", // Specify allowed headers for CORS //, Authorization
-			// AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+			AllowOrigins:     fURL.FrontendURL,
+			AllowHeaders:     "Origin, Content-Type, Accept, Authorization", // Specify allowed headers for CORS //, Authorization
+			AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 			AllowCredentials: true, // Specify if credentials are allowed
 		},
 	))
@@ -58,6 +58,14 @@ func InitRouterHeaderConfig(app *fiber.App) {
 
 func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *handler.UserHandler, Ahandler *handler.AccountHandler) {
 	// Create value Sub Router Group
+
+	// app.Use("/auth/logout", middlewares.AuthenticationRequired)
+	sub := app.Group("/auth")
+	sub.Post("/singup", Uhandler.RegisterUserHandler)
+	sub.Post("/singin", Uhandler.LoginUserHandler)
+	sub.Post("/singout", middlewares.UserTokenMiddleware(), Uhandler.LogoutUserHandler)
+	// sub.Post("/singout", Uhandler.LogoutUserHandler)
+
 	// Admin Setting Movie Review Router Group
 	admin := app.Group("/admin")
 	admin.Post("/createmovie", Mhandler.CreateMovie)
@@ -65,13 +73,6 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	admin.Delete("/deletemovie/:id", Mhandler.DeleteMovie)
 	admin.Get("/user/:id", middlewares.MiddlewareDeserializeRout, Ahandler.GetUserByIDHandler)
 	admin.Get("/users", middlewares.MiddlewareDeserializeRout, Ahandler.UsersAccountAllHandler)
-
-	// app.Use("/auth/logout", middlewares.AuthenticationRequired)
-	sub := app.Group("/auth")
-	sub.Post("/singup", Uhandler.RegisterUserHandler)
-	sub.Post("/singin", Uhandler.LoginUserHandler)
-	sub.Post("/singout", middlewares.MiddlewareDeserializeRout, Uhandler.LogoutUserHandler)
-	// sup.Post("/logout", Uhandler.LogoutUserHandler)
 
 	acc := app.Group("/account")
 	acc.Get("/user", Ahandler.UserAccountHandler)

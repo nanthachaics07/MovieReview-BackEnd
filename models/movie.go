@@ -29,7 +29,7 @@ type MovieOnHomePage struct {
 	Title       string `json:"title"`
 	ReleaseDate string `json:"release_date"`
 	MPAA        string `json:"mpaa_rating"`
-	ImageURL    string `json:"image_url"`
+	ImageURL    string `json:"imageUrl"`
 }
 
 type Movie struct {

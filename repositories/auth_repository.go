@@ -29,7 +29,7 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) error {
+func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) (string, error) {
 
 	// result := r.db.Where("email =?", user.Email).First(payload)
 	// if result.Error != nil {
@@ -38,14 +38,14 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 
 	if err := c.BodyParser(&payload); err != nil {
 		database.LogInfoErr("LoginUser", err.Error())
-		return errs.NewBadRequestError(err.Error())
+		return "", errs.NewBadRequestError(err.Error())
 	}
 
 	errors := models.ValidateStruct(payload)
 	// if len(errors) > 0 {
 	if errors != nil {
 		database.LogInfoErr("LoginUser", errors[0].Value)
-		return errs.NewBadRequestError(errors[0].Value) // set first error
+		return "", errs.NewBadRequestError(errors[0].Value) // set first error
 	}
 
 	var user models.User
@@ -53,12 +53,12 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 	result := r.db.First(&user, "email = ?", payload.Email)
 	if result.Error != nil {
 		database.LogInfoErr("LoginUser", result.Error.Error())
-		return errs.NewBadRequestError(result.Error.Error())
+		return "", errs.NewBadRequestError(result.Error.Error())
 	}
 
 	if user.ID == 0 {
 		database.LogInfoErr("LoginUser", "User not found")
-		return errs.NewBadRequestError("User not found")
+		return "", errs.NewBadRequestError("User not found")
 	}
 
 	// compare hashed password
@@ -67,7 +67,7 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 	if err != nil {
 		database.LogInfoErr("LoginUser", err.Error())
 		log.Printf("Password does not match : %v", err)
-		return errs.NewBadRequestError(err.Error())
+		return "", errs.NewBadRequestError(err.Error())
 	}
 	// Load configuration
 	config, err := utility.GetConfig()
@@ -97,7 +97,7 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 	tokenStringVerify, err := token.SignedString([]byte(jwtSecretKey))
 	if err != nil {
 		database.LogInfoErr("LoginUser", err.Error())
-		return errs.NewBadgatewayError(err.Error())
+		return "", errs.NewBadgatewayError(err.Error())
 	}
 	fmt.Println("tokenStringVerify: ", tokenStringVerify)
 
@@ -118,6 +118,7 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 		// Path:     "/",
 		Expires:  time.Now().Add(expires),
 		HTTPOnly: true,
+		SameSite: "Lax",
 		// 	// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
 		// 	// Domain:   setDoman,
 	})
@@ -133,7 +134,7 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) er
 
 	database.UseTrackingLog(user.Email, "Login", 1)
 
-	return nil
+	return tokenStringVerify, nil
 }
 
 func (r *userRepository) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {

@@ -15,9 +15,12 @@ func NewUserService(userRepository repositories.UserRepository) *userService {
 	return &userService{UserRepository: userRepository}
 }
 
-func (u *userService) LoginUser(payload *models.SignInInput, c *fiber.Ctx) error {
-	loginUser := u.UserRepository.LoginUser(payload, c)
-	return loginUser
+func (u *userService) LoginUser(payload *models.SignInInput, c *fiber.Ctx) (string, error) {
+	tokenUser, err := u.UserRepository.LoginUser(payload, c)
+	if err != nil {
+		return "", err
+	}
+	return tokenUser, nil
 }
 
 func (u *userService) RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error {

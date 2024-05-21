@@ -2,7 +2,7 @@ package handler
 
 import (
 	// "MovieReviewAPIs/authentication"
-	"MovieReviewAPIs/authentication"
+
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
@@ -31,11 +31,9 @@ func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 	}
 	database.LogInfoErr("LoginUserHandler Useremail", payload.Email)
 
-	userLogin := u.UserService.LoginUser(payload, c)
-	if err := userLogin; err != nil {
-		fmt.Println("Error logging in: ", err)
-		database.LogInfoErr("LoginUserHandler", err.Error())
-		return err
+	tokenUserLogin, err := u.UserService.LoginUser(payload, c)
+	if err != nil {
+		return errs.NewBadRequestError(err.Error())
 	}
 
 	// return c.JSON(fiber.Map{
@@ -43,7 +41,7 @@ func (u *UserHandler) LoginUserHandler(c *fiber.Ctx) error {
 	// 	"token":  "token is generated",
 	// })
 
-	return c.JSON(fiber.Map{"status": "success", "token": "token is generated"})
+	return c.JSON(fiber.Map{"status": "success", "token": tokenUserLogin})
 }
 
 func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
@@ -59,13 +57,12 @@ func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
 }
 
 func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
-	_, errorl := authentication.VerifyAuth(c)
-	if errorl != nil {
-		database.LogInfoErr("LogoutUserHandler", errorl.Error())
-		return errs.NewUnexpectedError(errorl.Error())
-	}
-
-	// user, err := database.GetUserFromToken(token)
+	// token, errorl := authentication.VerifyAuth(c)
+	// if errorl != nil {
+	// 	database.LogInfoErr("LogoutUserHandler", errorl.Error())
+	// 	return errs.NewUnexpectedError(errorl.Error())
+	// }
+	// println("logoutToken: ", token)
 
 	err := u.UserService.LogoutUser(c)
 	if err != nil {
@@ -77,8 +74,6 @@ func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 	fmt.Println("User logged out successfully & Delete cookie")
 	database.UseTrackingLog(c.IP(), "Logout", 3)
 
-	return c.JSON(fiber.Map{
-		"status":  "success",
-		"message": "User logged out successfully",
-	})
+	c.ClearCookie("jwt")
+	return c.SendStatus(fiber.StatusOK)
 }
