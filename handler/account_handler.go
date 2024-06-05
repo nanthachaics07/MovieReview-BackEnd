@@ -88,3 +88,35 @@ func (h *AccountHandler) GetUserByIDHandler(c *fiber.Ctx) error {
 	}
 	return c.JSON(payload)
 }
+
+func (h *AccountHandler) UpdateUserHandler(c *fiber.Ctx) error {
+
+	return c.JSON(fiber.Map{"status": "success"})
+}
+
+func (h *AccountHandler) DeleteUserHandler(c *fiber.Ctx) error {
+	token, err := authentication.VerifyAuth(c)
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		database.LogInfoErr("GetuserByID", "unauthenticated")
+		return err
+	}
+
+	user, err := database.GetUserFromToken(token)
+	if err != nil {
+		return err
+	}
+
+	idStr := c.Params("id")
+	newID, newErr := strconv.ParseUint(idStr, 10, 0)
+	if newErr != nil {
+		return errs.NewUnexpectedError(newErr.Error())
+	}
+	id := uint(newID)
+
+	if err := h.AccountService.DeleteUserByID(c, user, id); err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success"})
+}

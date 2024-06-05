@@ -53,8 +53,8 @@ func InitializeDB() error {
 	// Create UUID extension in PG
 	// dbcon.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 	// Auto migrate models // TODO: add models here
-	// err = dbcon.AutoMigrate(
 
+	// err = dbcon.AutoMigrate(
 	// 	&models.User{},
 	// 	&models.Log_err{},
 	// 	&models.Log_tracking_user{},

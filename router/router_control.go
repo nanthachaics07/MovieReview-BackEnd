@@ -2,6 +2,8 @@ package router
 
 import (
 	"MovieReviewAPIs/handler"
+	"fmt"
+
 	// "MovieReviewAPIs/middlewares"
 
 	"MovieReviewAPIs/utility"
@@ -13,6 +15,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 /*
@@ -63,16 +67,19 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	sub := app.Group("/auth")
 	sub.Post("/singup", Uhandler.RegisterUserHandler)
 	sub.Post("/singin", Uhandler.LoginUserHandler)
-	sub.Post("/singout", middlewares.UserTokenMiddleware(), Uhandler.LogoutUserHandler)
-	// sub.Post("/singout", Uhandler.LogoutUserHandler)
+	// sub.Post("/singout", middlewares.CookieTokenMiddleware(), Uhandler.LogoutUserHandler)
+	sub.Post("/singout", middlewares.CookieTokenMiddleware(), Uhandler.LogoutUserHandler)
 
 	// Admin Setting Movie Review Router Group
 	admin := app.Group("/admin")
+	//Movie admin router group
 	admin.Post("/createmovie", Mhandler.CreateMovie)
 	admin.Put("/updatemovie/:id", Mhandler.UpdateMovieByID)
 	admin.Delete("/deletemovie/:id", Mhandler.DeleteMovie)
-	admin.Get("/user/:id", middlewares.MiddlewareDeserializeRout, Ahandler.GetUserByIDHandler)
-	admin.Get("/users", middlewares.MiddlewareDeserializeRout, Ahandler.UsersAccountAllHandler)
+	// User Auth router group
+	admin.Get("/user/:id", Ahandler.GetUserByIDHandler)
+	admin.Get("/users", middlewares.CookieTokenMiddleware(), Ahandler.UsersAccountAllHandler)
+	admin.Delete("/deleteuser/:id", middlewares.CookieTokenMiddleware(), Ahandler.DeleteUserHandler)
 
 	acc := app.Group("/account")
 	acc.Get("/user", Ahandler.UserAccountHandler)
@@ -83,7 +90,40 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	// Main User Movie Router Group
 	app.Get("/", Mhandler.GetMovieForHomePage)
 	app.Get("/allmovies", Mhandler.GetAllMovies)
-	app.Get("/movie/:id", Mhandler.GetMovieByID)
+	app.Get("/movie/:id", middlewares.CookieTokenMiddleware(), Mhandler.GetMovieByID)
+
+	app.Get("/api/checktoken", func(c *fiber.Ctx) error { // TODO: Test token api func
+		token := c.Cookies("jwt")
+		if token == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"isAuthenticated": false,
+			})
+		}
+
+		config, err := utility.GetConfig()
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error getting configuration",
+			})
+		}
+
+		tokenByte, err := jwt.Parse(token, func(jwtToken *jwt.Token) (interface{}, error) {
+			if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %s", jwtToken.Header["alg"])
+			}
+			return []byte(config.JwtSecret), nil
+		})
+
+		if err != nil || !tokenByte.Valid {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"isAuthenticated": false,
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"isAuthenticated": true,
+		})
+	})
 
 	/*
 		Force Delete movie or Delete All

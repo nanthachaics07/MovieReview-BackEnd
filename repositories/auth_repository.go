@@ -118,7 +118,8 @@ func (r *userRepository) LoginUser(payload *models.SignInInput, c *fiber.Ctx) (s
 		// Path:     "/",
 		Expires:  time.Now().Add(expires),
 		HTTPOnly: true,
-		SameSite: "Lax",
+		SameSite: "Lax", // localhost = None //FIX: if bad req delete it
+		Secure:   false, // Set to true if using HTTPS
 		// 	// Secure:   false, // Set to true if using HTTPS //TODO: เดี๋ยวจะมาทำแปบบบบบ
 		// 	// Domain:   setDoman,
 	})
@@ -203,6 +204,8 @@ func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
 		Value:    "",
 		Expires:  expired,
 		HTTPOnly: true,
+		SameSite: "Lax", // localhost = None //FIX: if bad req delete it
+		Secure:   false, // Set to true if using HTTPS
 	})
 	// // Remove the cookie
 	// c.Cookie(&fiber.Cookie{
@@ -215,7 +218,7 @@ func (r *userRepository) LogoutUser(c *fiber.Ctx) error {
 	// 	SameSite: "Lax",
 	// })
 
-	// database.UseTrackingLog(c.IP(), "Logout", 3)
+	database.UseTrackingLog(c.IP(), "Logout", 3)
 	// Return a success response
 	// return c.SendStatus(fiber.StatusOK)
 	return nil

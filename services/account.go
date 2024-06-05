@@ -10,4 +10,6 @@ type AccountService interface {
 	UserAccount(c *fiber.Ctx, user *models.User) (*models.User, error)
 	UsersAccountAll(c *fiber.Ctx, user *models.User) ([]models.User, error)
 	GetUserByID(c *fiber.Ctx, user *models.User, id uint) (*models.User, error)
+	UpdateUserByID(c *fiber.Ctx, user *models.User, id uint) (*models.User, error)
+	DeleteUserByID(c *fiber.Ctx, user *models.User, id uint) error
 }

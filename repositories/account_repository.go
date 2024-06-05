@@ -23,7 +23,7 @@ func (u *accountUser) UserAccount(c *fiber.Ctx, uid uint) (*models.User, error) 
 	if err := u.db.Where("id = ?", uid).First(&user).Error; err != nil {
 		return nil, err
 	}
-	database.UseTrackingLog(c.IP(), "User", 3)
+	database.UseTrackingLog(c.IP(), "UserAccount", 3)
 
 	return &user, nil
 }
@@ -43,7 +43,7 @@ func (u *accountUser) UsersAccountAll(c *fiber.Ctx) ([]models.User, error) {
 	// 	database.LogInfoErr("user", "error retrieving user from database: "+result.Error.Error())
 	// 	return errs.NewUnauthorizedError("Error retrieving user from database")
 	// }
-	database.UseTrackingLog(c.IP(), "User", 3)
+	database.UseTrackingLog(c.IP(), "UserAccountAll", 3)
 
 	return userFromDB, nil
 }
@@ -54,13 +54,28 @@ func (u *accountUser) GetuserByID(c *fiber.Ctx, id uint) (*models.User, error) {
 	if err := u.db.First(&user, id).Error; err != nil {
 		return nil, err
 	}
+
+	database.UseTrackingLog(c.IP(), "GetuserByID", 3)
 	return &user, nil
 }
 
 func (u *accountUser) UpdateUserByID(c *fiber.Ctx, id uint) (*models.User, error) {
+	var user models.User
+	if err := u.db.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+
+	database.UseTrackingLog(c.IP(), "UpdateUserByID", 3)
 	return nil, nil
 }
 
 func (u *accountUser) DeleteUserByID(c *fiber.Ctx, id uint) error {
+	var user models.User
+
+	if err := u.db.Where("id = ?", id).Delete(&user).Error; err != nil {
+		return err
+	}
+
+	database.UseTrackingLog(c.IP(), "DeleteUserByID", 3)
 	return nil
 }

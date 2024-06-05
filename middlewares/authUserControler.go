@@ -76,7 +76,7 @@ func UserTokenMiddleware() fiber.Handler { //TODO: Update ROLE 'admin'
 	return func(c *fiber.Ctx) error {
 		// ดึงค่า token จาก header
 		tokenAuth := c.Get("Authorization")
-		// println("tokenAUTH: ", token)
+		println("tokenAUTH: ", tokenAuth)
 
 		if !strings.HasPrefix(tokenAuth, "Bearer ") {
 			database.LogInfoErr("MiddlewareDeserializeRout", "Missing or invalid token prefix")
@@ -86,6 +86,7 @@ func UserTokenMiddleware() fiber.Handler { //TODO: Update ROLE 'admin'
 		}
 
 		token := strings.TrimPrefix(tokenAuth, "Bearer ")
+		fmt.Println("token in header: ", token)
 
 		if token == "" {
 			database.LogInfoErr("MiddlewareDeserializeRout", "Missing token")
@@ -124,5 +125,89 @@ func UserTokenMiddleware() fiber.Handler { //TODO: Update ROLE 'admin'
 		}
 
 		return c.Next()
+	}
+}
+
+func CookieTokenMiddleware() fiber.Handler { //TODO: Update For Postman test
+	return func(c *fiber.Ctx) error {
+		var token string
+
+		// Extract token from the Authorization headerrrrrr
+		authorization := c.Get("Authorization")
+		if strings.HasPrefix(authorization, "Bearer ") {
+			token = strings.TrimPrefix(authorization, "Bearer ")
+			fmt.Println("Token from Authorization header: ", token)
+		} else {
+			// Fallback to check the Set-Cookie header
+			setCookie := c.Get("Cookie")
+			fmt.Println("Cookies: ", setCookie)
+			if setCookie != "" {
+				// Parse the Set-Cookie header to extract the jwt token
+				cookieParts := strings.Split(setCookie, ";")
+				for _, part := range cookieParts {
+					part = strings.TrimSpace(part)
+					if strings.HasPrefix(part, "jwt=") {
+						token = strings.TrimPrefix(part, "jwt=")
+						fmt.Println("Token from Cookie: ", token)
+						break
+					}
+				}
+			}
+		}
+
+		if token == "" {
+			database.LogInfoErr("UserTokenMiddleware", "Missing token")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Missing token",
+			})
+		}
+
+		// Get configuration which includes the JWT secret
+		config, err := utility.GetConfig()
+		if err != nil {
+			database.LogInfoErr("UserTokenMiddleware", "Error getting config")
+			fmt.Println("Error getting config: ", err)
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error":   "Internal Server Error",
+				"message": "Error getting configuration",
+			})
+		}
+
+		// Parse and validate the token
+		tokenByte, err := jwt.Parse(token, func(jwtToken *jwt.Token) (interface{}, error) {
+			if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
+				database.LogInfoErr("UserTokenMiddleware", "Unexpected signing method")
+				return nil, fmt.Errorf("unexpected signing method: %s", jwtToken.Header["alg"])
+			}
+			return []byte(config.JwtSecret), nil
+		})
+
+		if err != nil {
+			database.LogInfoErr("UserTokenMiddleware", "Error parsing token")
+			fmt.Println("Error parsing token: ", err)
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error":   "Unauthorized",
+				"message": "Invalid token",
+			})
+		}
+
+		// Validate the token claims
+		if claims, ok := tokenByte.Claims.(jwt.MapClaims); ok && tokenByte.Valid {
+			// if ok {
+			// 	claims := tokenByte.Claims.(jwt.MapClaims)
+			// 	c.Locals("userID", claims["userID"])
+			// 	c.Locals("userRole", claims["userRole"])
+			// 	c.Locals("userEmail", claims["userEmail"])
+			// }
+			// Optional: Add claims to context for further use
+			c.Locals("user", claims)
+			return c.Next()
+		} else {
+			database.LogInfoErr("UserTokenMiddleware", "Invalid claims or token")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error":   "Unauthorized",
+				"message": "Invalid claims or token",
+			})
+		}
 	}
 }

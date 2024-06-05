@@ -54,7 +54,7 @@ func (s *accountService) UsersAccountAll(c *fiber.Ctx, user *models.User) ([]mod
 }
 
 func (s *accountService) GetUserByID(c *fiber.Ctx, user *models.User, id uint) (*models.User, error) {
-	if user.Role != nil && *user.Role != "admin" {
+	if user.Role != nil && *user.Role != "admin" && *user.Role != "user" {
 		return nil, errors.New("unauthorized user role!! WHO ARE U?")
 	}
 	getUserbyid, err := s.AccountRepository.GetuserByID(c, id)
@@ -63,4 +63,24 @@ func (s *accountService) GetUserByID(c *fiber.Ctx, user *models.User, id uint) (
 	}
 
 	return getUserbyid, nil
+}
+
+func (s *accountService) UpdateUserByID(c *fiber.Ctx, user *models.User, id uint) (*models.User, error) {
+	if user.Role != nil && *user.Role != "admin" && *user.Role != "user" {
+		return nil, errors.New("unauthorized user role!! WHO ARE U?")
+	}
+
+	return nil, nil
+}
+
+func (s *accountService) DeleteUserByID(c *fiber.Ctx, user *models.User, id uint) error {
+	if user.Role != nil && *user.Role != "admin" {
+		return errors.New("unauthorized user role!! WHO ARE U?")
+	}
+
+	if err := s.AccountRepository.DeleteUserByID(c, id); err != nil {
+		return err
+	}
+
+	return nil
 }
