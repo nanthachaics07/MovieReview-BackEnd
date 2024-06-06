@@ -28,7 +28,7 @@ func main() { // Do not delete any line in this func if U won't check each file
 		log.Fatalf("Error initializing database: %v", err)
 	}
 
-	// // Initialize Fiber app
+	// Initialize Fiber app
 	app := fiber.New()
 
 	// Initialize router

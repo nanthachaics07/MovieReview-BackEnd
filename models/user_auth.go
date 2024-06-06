@@ -50,6 +50,11 @@ type UserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type UserUpdate struct {
+	Name  string `json:"name" validate:"required"`
+	Email string `json:"email" validate:"required"`
+}
+
 // func used to filter user record
 func FilterUserRecord(user *User) UserResponse {
 	return UserResponse{

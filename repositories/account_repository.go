@@ -34,17 +34,8 @@ func (u *accountUser) UsersAccountAll(c *fiber.Ctx) ([]models.User, error) {
 	if err := u.db.Find(&userFromDB).Error; err != nil {
 		return nil, err
 	}
-	// if result.Error != nil {
-	// 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-	// 		c.Status(fiber.StatusNotFound)
-	// 		return errs.NewNotFoundError("Users not found. Error retrieving user from database")
-	// 	}
-	// 	c.Status(fiber.StatusInternalServerError)
-	// 	database.LogInfoErr("user", "error retrieving user from database: "+result.Error.Error())
-	// 	return errs.NewUnauthorizedError("Error retrieving user from database")
-	// }
-	database.UseTrackingLog(c.IP(), "UserAccountAll", 3)
 
+	database.UseTrackingLog(c.IP(), "UserAccountAll", 3)
 	return userFromDB, nil
 }
 
@@ -59,14 +50,14 @@ func (u *accountUser) GetuserByID(c *fiber.Ctx, id uint) (*models.User, error) {
 	return &user, nil
 }
 
-func (u *accountUser) UpdateUserByID(c *fiber.Ctx, id uint) (*models.User, error) {
-	var user models.User
-	if err := u.db.First(&user, id).Error; err != nil {
-		return nil, err
+func (u *accountUser) UpdateUserByID(c *fiber.Ctx, payload *models.UserUpdate, id uint) error {
+
+	if err := u.db.Model(&models.User{}).Where("id = ?", id).Updates(payload).Error; err != nil {
+		return err
 	}
 
 	database.UseTrackingLog(c.IP(), "UpdateUserByID", 3)
-	return nil, nil
+	return nil
 }
 
 func (u *accountUser) DeleteUserByID(c *fiber.Ctx, id uint) error {

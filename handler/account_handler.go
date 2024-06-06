@@ -4,6 +4,7 @@ import (
 	"MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
+	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/services"
 	"fmt"
 	"strconv"
@@ -91,7 +92,30 @@ func (h *AccountHandler) GetUserByIDHandler(c *fiber.Ctx) error {
 
 func (h *AccountHandler) UpdateUserHandler(c *fiber.Ctx) error {
 
-	return c.JSON(fiber.Map{"status": "success"})
+	token, err := authentication.VerifyAuth(c)
+	if err != nil {
+		database.LogInfoErr("UpdateUserHandler", "unauthenticated")
+		return errs.NewUnauthorizedError("unauthenticated")
+	}
+
+	user, err := database.GetUserFromToken(token)
+	if err != nil {
+		database.LogInfoErr("UpdateUserHandler", "failed to get user from token")
+		return errs.NewInternalServerError("failed to get user from token")
+	}
+
+	payload := new(models.UserUpdate)
+	if err := c.BodyParser(payload); err != nil {
+		database.LogInfoErr("UpdateUserHandler", "failed to parse request body")
+		return errs.NewBadRequestError("failed to parse request body")
+	}
+
+	if err := h.AccountService.UpdateUserByID(c, user, payload); err != nil {
+		database.LogInfoErr("UpdateUserHandler", "failed to update user")
+		return errs.NewInternalServerError("failed to update user")
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "message": "user updated successfully"})
 }
 
 func (h *AccountHandler) DeleteUserHandler(c *fiber.Ctx) error {

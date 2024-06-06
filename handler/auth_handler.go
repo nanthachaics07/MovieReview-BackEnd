@@ -57,14 +57,6 @@ func (u *UserHandler) RegisterUserHandler(c *fiber.Ctx) error {
 }
 
 func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
-	// _, errorl := authentication.VerifyAuth(c)
-	// if errorl != nil {
-	// 	database.LogInfoErr("LogoutUserHandler", errorl.Error())
-	// 	return errs.NewUnexpectedError(errorl.Error())
-	// }
-
-	// user, err := database.GetUserFromToken(token)
-
 	err := u.UserService.LogoutUser(c)
 	if err != nil {
 		fmt.Println("Error logging out: ", err)
@@ -80,25 +72,3 @@ func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
 		"message": "User logged out successfully",
 	})
 }
-
-// func (u *UserHandler) LogoutUserHandler(c *fiber.Ctx) error {
-// 	// token, errorl := authentication.VerifyAuth(c)
-// 	// if errorl != nil {
-// 	// 	database.LogInfoErr("LogoutUserHandler", errorl.Error())
-// 	// 	return errs.NewUnexpectedError(errorl.Error())
-// 	// }
-// 	// println("logoutToken: ", token)
-
-// 	err := u.UserService.LogoutUser(c)
-// 	if err != nil {
-// 		fmt.Println("Error logging out: ", err)
-// 		database.LogInfoErr("LogoutUserHandler", err.Error())
-// 		return errs.NewBadRequestError(err.Error())
-// 	}
-
-// 	fmt.Println("User logged out successfully & Delete cookie")
-// 	database.UseTrackingLog(c.IP(), "Logout", 3)
-
-// 	c.ClearCookie("jwt")
-// 	return c.SendStatus(fiber.StatusOK)
-// }

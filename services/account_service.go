@@ -65,12 +65,18 @@ func (s *accountService) GetUserByID(c *fiber.Ctx, user *models.User, id uint) (
 	return getUserbyid, nil
 }
 
-func (s *accountService) UpdateUserByID(c *fiber.Ctx, user *models.User, id uint) (*models.User, error) {
+func (s *accountService) UpdateUserByID(c *fiber.Ctx, user *models.User, payload *models.UserUpdate) error {
 	if user.Role != nil && *user.Role != "admin" && *user.Role != "user" {
-		return nil, errors.New("unauthorized user role!! WHO ARE U?")
+		return errors.New("unauthorized user role!! WHO ARE U?")
 	}
 
-	return nil, nil
+	uid := user.ID
+	err := s.AccountRepository.UpdateUserByID(c, payload, uid)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *accountService) DeleteUserByID(c *fiber.Ctx, user *models.User, id uint) error {

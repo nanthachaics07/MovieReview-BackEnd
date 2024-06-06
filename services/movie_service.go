@@ -52,9 +52,9 @@ func (s *movieService) GetMovieEachFieldForHomePage() ([]models.MovieOnHomePage,
 
 func (s *movieService) GetMovieByID(users *models.User, id uint) (*models.Movies, error) {
 	// Check user role
-	// if users.Role != nil && *users.Role != "admin" {
-	// 	return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
-	// }
+	if users.Role != nil && *users.Role != "admin" && *users.Role != "user" {
+		return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
+	}
 	ifndMovie, err := s.MovieRepository.FindMovieByID(id)
 	if err != nil {
 		return nil, err
