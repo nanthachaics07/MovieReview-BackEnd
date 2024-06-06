@@ -20,11 +20,11 @@ type DatabaseConfig struct {
 func LoadConfig() *AppConfig {
 	return &AppConfig{
 		Database: DatabaseConfig{
-			Host:     "localhost",
+			Host:     "192.168.1.45",
 			Port:     5432,
-			Username: "myuser",
+			Username: "admin",
 			Password: "mypassword",
-			Name:     "mydatabase",
+			Name:     "moviereview",
 		},
 	}
 }

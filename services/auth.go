@@ -7,7 +7,7 @@ import (
 )
 
 type AuthService interface {
-	LoginUser(payload *models.SignInInput, c *fiber.Ctx) error
+	LoginUser(payload *models.SignInInput, c *fiber.Ctx) (string, error)
 	RegisterUser(payload *models.SignUpInput, c *fiber.Ctx) error
 	LogoutUser(c *fiber.Ctx) error
 }

@@ -28,17 +28,31 @@ func (s *movieService) GetAllMovies(users *models.User) ([]models.Movies, error)
 	return getAllMovieRes, nil
 }
 
-func (s *movieService) GetMovieEachFieldForHomePage() ([]models.Movies, error) {
+func (s *movieService) GetMovieEachFieldForHomePage() ([]models.MovieOnHomePage, error) {
 	homePage, err := s.MovieRepository.GetMovieEachFieldForHomePage()
 	if err != nil {
 		return nil, err
 	}
-	return homePage, nil
+	var movieHomeRes []models.MovieOnHomePage
+
+	for _, movies := range homePage {
+		movieHomePages := models.MovieOnHomePage{
+			ID:          movies.ID,
+			Title:       movies.Title,
+			ReleaseDate: movies.ReleaseDate,
+			// Runtime:     movies.Runtime,
+			MPAA:     movies.MPAA,
+			ImageURL: movies.ImageURL,
+		}
+		movieHomeRes = append(movieHomeRes, movieHomePages)
+	}
+
+	return movieHomeRes, nil
 }
 
 func (s *movieService) GetMovieByID(users *models.User, id uint) (*models.Movies, error) {
 	// Check user role
-	if users.Role != nil && *users.Role != "admin" {
+	if users.Role != nil && *users.Role != "admin" && *users.Role != "user" {
 		return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
 	}
 	ifndMovie, err := s.MovieRepository.FindMovieByID(id)
@@ -70,6 +84,7 @@ func (s *movieService) DeleteMovieByID(user *models.User, id uint) error {
 	if user.Role != nil && *user.Role != "admin" {
 		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
 	}
-	deleteMovie := s.MovieRepository.DeleteMovieByID(id)
+	movie := new(models.Movies)
+	deleteMovie := s.MovieRepository.DeleteMovieByID(movie, id)
 	return deleteMovie
 }
