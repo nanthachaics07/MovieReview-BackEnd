@@ -1,6 +1,7 @@
 package database
 
 import (
+	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
 	"fmt"
 	"log"
@@ -41,12 +42,13 @@ func InitializeDB() error {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
-	sqlDB, err := dbcon.DB()
+	reSQLdb, err := dbcon.DB()
 	if err != nil {
 		LogInfoErr("InitializeDB", err.Error())
 		fmt.Println("Connected to database Because: ", err)
-		defer sqlDB.Close()
+		return fmt.Errorf("error getting sql.DB: %v", err)
 	}
+	defer reSQLdb.Close()
 
 	DB = dbcon
 
@@ -54,15 +56,15 @@ func InitializeDB() error {
 	// dbcon.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 	// Auto migrate models // TODO: add models here
 
-	// err = dbcon.AutoMigrate(
-	// 	&models.User{},
-	// 	&models.Log_err{},
-	// 	&models.Log_tracking_user{},
-	// )
-	// if err != nil {
-	// 	LogInfoErr("InitializeDB", err.Error())
-	// 	log.Fatalf("Error migrating models: %v", err)
-	// }
+	err = dbcon.AutoMigrate(
+		&models.User{},
+		&models.Log_err{},
+		&models.Log_tracking_user{},
+	)
+	if err != nil {
+		LogInfoErr("InitializeDB", err.Error())
+		log.Fatalf("Error migrating models: %v", err)
+	}
 
 	settingDBConnection()
 

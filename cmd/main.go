@@ -25,7 +25,7 @@ func main() { // Do not delete any line in this func if U won't check each file
 	// Initialize database connection
 	err := database.InitializeDB()
 	if err != nil {
-		log.Fatalf("Error initializing database: %v", err)
+		log.Fatalf("Error initializing on main func: %v", err)
 	}
 
 	// Initialize Fiber app
