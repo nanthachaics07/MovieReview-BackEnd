@@ -35,9 +35,9 @@ func main() { // Do not delete any line in this func if U won't check each file
 	router.InitRouterHeaderConfig(app)
 
 	// Initialize Repository
-	movieRepo := repositories.NewMovieRepository(database.DB)
-	userRepo := repositories.NewUserRepository(database.DB)
-	accountRepo := repositories.NewAccountRepository(database.DB)
+	movieRepo := repositories.NewMovieRepository(database.DB.Db)
+	userRepo := repositories.NewUserRepository(database.DB.Db)
+	accountRepo := repositories.NewAccountRepository(database.DB.Db)
 
 	// Initialize movie service
 	movieService := services.NewMovieService(movieRepo)

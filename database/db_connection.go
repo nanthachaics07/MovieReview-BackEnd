@@ -1,7 +1,6 @@
 package database
 
 import (
-	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/utility"
 	"fmt"
 	"log"
@@ -13,7 +12,11 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var DB *gorm.DB
+type DBinstance struct {
+	Db *gorm.DB
+}
+
+var DB DBinstance
 
 func InitializeDB() error {
 	// Connect to PostgreSQL database
@@ -46,25 +49,25 @@ func InitializeDB() error {
 	if err != nil {
 		LogInfoErr("InitializeDB", err.Error())
 		fmt.Println("Connected to database Because: ", err)
+		defer reSQLdb.Close()
 		return fmt.Errorf("error getting sql.DB: %v", err)
 	}
-	defer reSQLdb.Close()
 
-	DB = dbcon
+	DB.Db = dbcon
 
 	// Create UUID extension in PG
 	// dbcon.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 	// Auto migrate models // TODO: add models here
 
-	err = dbcon.AutoMigrate(
-		&models.User{},
-		&models.Log_err{},
-		&models.Log_tracking_user{},
-	)
-	if err != nil {
-		LogInfoErr("InitializeDB", err.Error())
-		log.Fatalf("Error migrating models: %v", err)
-	}
+	// err = dbcon.AutoMigrate(
+	// 	&models.User{},
+	// 	&models.Log_err{},
+	// 	&models.Log_tracking_user{},
+	// )
+	// if err != nil {
+	// 	LogInfoErr("InitializeDB", err.Error())
+	// 	log.Fatalf("Error migrating models: %v", err)
+	// }
 
 	settingDBConnection()
 
@@ -73,7 +76,7 @@ func InitializeDB() error {
 
 func settingDBConnection() {
 	// Get the underlying *sql.DB instance
-	sqlDB, err := DB.DB()
+	sqlDB, err := DB.Db.DB()
 	if err != nil {
 		LogInfoErr("settingDB", err.Error())
 		log.Fatalf("Error getting underlying *sql.DB: %v", err)
