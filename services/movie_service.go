@@ -55,10 +55,29 @@ func (s *movieService) GetMovieByID(users *models.User, id uint) (*models.Movies
 	if users.Role != nil && *users.Role != "admin" && *users.Role != "user" {
 		return nil, errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
 	}
+
 	ifndMovie, err := s.MovieRepository.FindMovieByID(id)
 	if err != nil {
 		return nil, err
 	}
+
+	// var movieByidRes []models.Movies
+
+	// for _, movie := range ifndMovie {
+	// 	if movie.ID == id {
+	// 		movieByID := models.Movies{
+	// 			ID:          movie.ID,
+	// 			Title:       movie.Title,
+	// 			ReleaseDate: movie.ReleaseDate,
+	// 			Runtime:     movie.Runtime,
+	// 			MPAA:        movie.MPAA,
+	// 			Description: movie.Description,
+	// 			ImageURL:    movie.ImageURL,
+	// 		}
+	// 		movieByidRes = append(movieByidRes, movieByID)
+	// 	}
+	// }
+
 	return ifndMovie, nil
 }
 

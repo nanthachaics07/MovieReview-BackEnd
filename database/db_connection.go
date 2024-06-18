@@ -49,8 +49,8 @@ func InitializeDB() error {
 	if err != nil {
 		LogInfoErr("InitializeDB", err.Error())
 		fmt.Println("Connected to database Because: ", err)
-		defer reSQLdb.Close()
-		return fmt.Errorf("error getting sql.DB: %v", err)
+		reSQLdb.Close()
+		return fmt.Errorf("error getting sql.DB: %#v", err)
 	}
 
 	DB.Db = dbcon
