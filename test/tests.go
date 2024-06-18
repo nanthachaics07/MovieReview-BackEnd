@@ -31,7 +31,7 @@ func MockFindMovieByID(id uint, c *fiber.Ctx) (*models.Movies, error) {
 	// database.GetUserFromToken(token)
 
 	var movie models.Movies
-	if err := database.DB.First(&movie, id).Error; err != nil {
+	if err := database.DB.Db.First(&movie, id).Error; err != nil {
 		database.LogInfoErr("FindMovieByID", err.Error())
 		return nil, err
 	}

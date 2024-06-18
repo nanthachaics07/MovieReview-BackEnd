@@ -10,7 +10,7 @@ func LogInfoErr(funcname string, infoLog string) {
 		Message:  infoLog,
 	}
 
-	DB.Create(&logErr)
+	DB.Db.Create(&logErr)
 }
 
 func UseTrackingLog(email string, message string, reqType uint) {
@@ -19,6 +19,6 @@ func UseTrackingLog(email string, message string, reqType uint) {
 		Message:    message,
 		TypeReqest: reqType,
 	}
-	DB.Create(&logLogin)
+	DB.Db.Create(&logLogin)
 
 }

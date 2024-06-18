@@ -43,6 +43,17 @@ func (h *MovieHandler) GetAllMovies(c *fiber.Ctx) error { //TODO: fix business l
 }
 
 func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
+	token, err := authentication.VerifyAuth(c)
+
+	if err != nil {
+		database.LogInfoErr("GetAllMovies", err.Error())
+		return errs.NewUnexpectedError(err.Error())
+	}
+
+	user, err := database.GetUserFromToken(token)
+	if err != nil {
+		return err
+	}
 
 	idStr := c.Params("id")
 	id, err := strconv.ParseUint(idStr, 10, 0)
@@ -50,7 +61,7 @@ func (h *MovieHandler) GetMovieByID(c *fiber.Ctx) error {
 		return errs.NewUnexpectedError(err.Error())
 	}
 
-	movie, err := h.MovieService.GetMovieByID(nil, uint(id))
+	movie, err := h.MovieService.GetMovieByID(user, uint(id))
 	if err != nil {
 		return errs.NewUnexpectedError(err.Error())
 	}

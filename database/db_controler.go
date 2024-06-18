@@ -27,7 +27,7 @@ func GetUserFromToken(token *jwt.Token) (*models.User, error) {
 	}
 
 	var userFromDB models.User
-	result := DB.Where("id = ?", claims.Issuer).First(&userFromDB)
+	result := DB.Db.Where("id = ?", claims.Issuer).First(&userFromDB)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			LogInfoErr("GetUserFromToken", "user not found in database")

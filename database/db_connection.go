@@ -12,7 +12,11 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var DB *gorm.DB
+type DBinstance struct {
+	Db *gorm.DB
+}
+
+var DB DBinstance
 
 func InitializeDB() error {
 	// Connect to PostgreSQL database
@@ -41,14 +45,15 @@ func InitializeDB() error {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
-	sqlDB, err := dbcon.DB()
+	reSQLdb, err := dbcon.DB()
 	if err != nil {
 		LogInfoErr("InitializeDB", err.Error())
 		fmt.Println("Connected to database Because: ", err)
-		defer sqlDB.Close()
+		reSQLdb.Close()
+		return fmt.Errorf("error getting sql.DB: %#v", err)
 	}
 
-	DB = dbcon
+	DB.Db = dbcon
 
 	// Create UUID extension in PG
 	// dbcon.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
@@ -71,7 +76,7 @@ func InitializeDB() error {
 
 func settingDBConnection() {
 	// Get the underlying *sql.DB instance
-	sqlDB, err := DB.DB()
+	sqlDB, err := DB.Db.DB()
 	if err != nil {
 		LogInfoErr("settingDB", err.Error())
 		log.Fatalf("Error getting underlying *sql.DB: %v", err)

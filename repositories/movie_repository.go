@@ -52,13 +52,18 @@ func (r *movieRepository) GetMovieEachFieldForHomePage() ([]models.MovieOnHomePa
 	var movies []models.MovieOnHomePage
 	if err := r.db.Table("movies").Select("id, title, release_date, mpaa, image_url").Find(&movies).Error; err != nil {
 		database.LogInfoErr("GetMovieEachFieldForHomePage", err.Error())
-		return movies, err
+		return nil, err
 	}
 	return movies, nil
 }
 
 func (r *movieRepository) FindMovieByID(id uint) (*models.Movies, error) {
 
+	// var movie []models.Movies
+	// if err := r.db.Table("movies").Select("id, title, release_date, runtime, description, mpaa, image_url").Find(&movie, id).Error; err != nil {
+	// 	database.LogInfoErr("FindMovieByID", err.Error())
+	// 	return nil, err
+	// }
 	var movie models.Movies
 	if err := r.db.First(&movie, id).Error; err != nil {
 		database.LogInfoErr("FindMovieByID", err.Error())
