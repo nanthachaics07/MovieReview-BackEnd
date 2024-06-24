@@ -79,7 +79,7 @@ func RouterControl(app *fiber.App, Mhandler *handler.MovieHandler, Uhandler *han
 	//User Account router group
 	acc := app.Group("/account")
 	acc.Get("/user", middlewares.CookieTokenMiddleware(), Ahandler.UserAccountHandler)
-	acc.Put("/updateuser/:id", middlewares.CookieTokenMiddleware(), Ahandler.UpdateUserHandler)
+	acc.Patch("/updateuser/:id", middlewares.CookieTokenMiddleware(), Ahandler.UpdateUserHandler)
 	// acc.Delete("/deleteuser/:id", middlewares.CookieTokenMiddleware(), Ahandler.DeleteUserHandler)
 
 	// acc.Patch("/", Uhandler.UpdateUserHandler)
