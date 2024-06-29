@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"MovieReviewAPIs/database"
+	"MovieReviewAPIs/handler/errs"
+	"strings"
 
 	// "MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
@@ -26,8 +28,12 @@ func NewMovieRepository(db *gorm.DB) *movieRepository {
 
 func (r *movieRepository) CreateMovie(movie *models.Movies) error {
 	if err := r.db.Create(movie).Error; err != nil {
-		database.LogInfoErr("CreateMovie", err.Error())
-		return err
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			database.LogInfoErr("CreateMovie", "Failed to create movie: "+err.Error())
+			return errs.NewConflictError("Movie with the same ID already exists")
+		}
+		database.LogInfoErr("CreateMovie", "Failed to create movie: "+err.Error())
+		return errs.NewUnexpectedError("Failed to create movie: " + err.Error())
 	}
 	return nil
 }

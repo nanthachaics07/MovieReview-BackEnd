@@ -6,7 +6,7 @@ import (
 
 type Movies struct {
 	gorm.Model
-	ID            uint   `json:"id"`
+	ID            uint   `gorm:"primaryKey;autoIncrement" json:"id"`
 	Title         string `json:"title"`
 	ReleaseDate   string `json:"release_date"`
 	Runtime       string `json:"runtime"`

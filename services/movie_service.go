@@ -4,6 +4,9 @@ import (
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/repositories"
+	"errors"
+
+	"gorm.io/gorm"
 )
 
 type movieService struct {
@@ -81,22 +84,46 @@ func (s *movieService) GetMovieByID(users *models.User, id uint) (*models.Movies
 	return ifndMovie, nil
 }
 
-func (s *movieService) CreateMovie(user *models.User) error {
+func (s *movieService) CreateMovie(user *models.User, movie *models.Movies) error {
 	if user.Role != nil && *user.Role != "admin" {
 		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
 	}
-	movie := new(models.Movies)
+	// movie := new(models.Movies)
+
+	if movie.Title == "" || movie.ReleaseDate == "" || movie.Runtime == "" || movie.MPAA == "" || movie.Description == "" || movie.ImageURL == "" {
+		return errs.NewBadRequestError("invalid movie data")
+	}
+
 	createMovieErr := s.MovieRepository.CreateMovie(movie)
 	return createMovieErr
 }
 
-func (s *movieService) UpdateMovieByID(user *models.User, id uint) error {
+func (s *movieService) UpdateMovieByID(user *models.User, id uint, movie *models.Movies) error {
 	if user.Role != nil && *user.Role != "admin" {
 		return errs.NewUnauthorizedError("unauthorized user role!! WHO ARE U?")
 	}
-	movie := new(models.Movies)
-	updateMovie := s.MovieRepository.UpdateMovieByID(movie, id)
-	return updateMovie
+	// movie := new(models.Movies)
+
+	var updateMovie models.Movies
+	if _, err := s.MovieRepository.FindMovieByID(id); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errs.NewNotFoundError("movie not found")
+		}
+		return err
+	}
+
+	// updateMovie.ID = id
+	updateMovie.Title = movie.Title
+	updateMovie.ReleaseDate = movie.ReleaseDate
+	updateMovie.Runtime = movie.Runtime
+	updateMovie.MPAA = movie.MPAA
+	updateMovie.Description = movie.Description
+	updateMovie.ImageURL = movie.ImageURL
+
+	if err := s.MovieRepository.UpdateMovieByID(&updateMovie, id); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *movieService) DeleteMovieByID(user *models.User, id uint) error {

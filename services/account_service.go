@@ -84,6 +84,10 @@ func (s *accountService) DeleteUserByID(c *fiber.Ctx, user *models.User, id uint
 		return errors.New("unauthorized user role!! WHO ARE U?")
 	}
 
+	if id <= 0 {
+		return errors.New(fiber.ErrBadRequest.Error())
+	}
+
 	if err := s.AccountRepository.DeleteUserByID(c, id); err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"MovieReviewAPIs/authentication"
 	"MovieReviewAPIs/database"
 	"MovieReviewAPIs/handler/errs"
+	"MovieReviewAPIs/models"
 	"MovieReviewAPIs/services"
 	"fmt"
 	"strconv"
@@ -89,7 +90,12 @@ func (h *MovieHandler) CreateMovie(c *fiber.Ctx) error {
 		return err
 	}
 
-	if err := h.MovieService.CreateMovie(user); err != nil {
+	var createmovie models.Movies
+	if err := c.BodyParser(&createmovie); err != nil {
+		return errs.NewUnexpectedError(err.Error())
+	}
+
+	if err := h.MovieService.CreateMovie(user, &createmovie); err != nil {
 		return errs.NewUnexpectedError(err.Error())
 	}
 	return c.JSON(fiber.Map{"status": "success",
@@ -109,11 +115,17 @@ func (h *MovieHandler) UpdateMovieByID(c *fiber.Ctx) error {
 	}
 
 	idStr := c.Params("id")
+
+	var updatedMovie models.Movies
+	if err := c.BodyParser(&updatedMovie); err != nil {
+		return errs.NewUnexpectedError(err.Error())
+	}
+
 	id, err := strconv.ParseUint(idStr, 10, 0)
 	if err != nil {
 		return errs.NewUnexpectedError(err.Error())
 	}
-	if err := h.MovieService.UpdateMovieByID(user, uint(id)); err != nil {
+	if err := h.MovieService.UpdateMovieByID(user, uint(id), &updatedMovie); err != nil {
 		return errs.NewUnexpectedError(err.Error())
 	}
 	return c.JSON(fiber.Map{"status": "success",

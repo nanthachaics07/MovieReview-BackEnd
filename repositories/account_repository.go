@@ -18,7 +18,6 @@ func NewAccountRepository(db *gorm.DB) *accountUser {
 	return &accountUser{db: db}
 }
 func (u *accountUser) UserAccount(c *fiber.Ctx, uid uint) (*models.User, error) {
-
 	var user models.User
 	if err := u.db.Where("id = ?", uid).First(&user).Error; err != nil {
 		return nil, err

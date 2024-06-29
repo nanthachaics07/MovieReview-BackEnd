@@ -4,6 +4,9 @@ import (
 	"MovieReviewAPIs/handler/errs"
 	"MovieReviewAPIs/models"
 	"errors"
+	"fmt"
+	"log"
+	"time"
 
 	// "github.com/golang-jwt/jwt"
 	jwt "github.com/dgrijalva/jwt-go"
@@ -38,4 +41,34 @@ func GetUserFromToken(token *jwt.Token) (*models.User, error) {
 	}
 
 	return &userFromDB, nil
+}
+
+func settingDBConnection() {
+	// Get the underlying *sql.DB instance
+	sqlDB, err := DB.Db.DB()
+	if err != nil {
+		LogInfoErr("settingDB", err.Error())
+		log.Fatalf("Error getting underlying *sql.DB: %v", err)
+	}
+
+	// Set max open connections
+	sqlDB.SetMaxOpenConns(20)
+
+	// Set max idle connections
+	sqlDB.SetMaxIdleConns(20)
+
+	// Set max lifetime
+	sqlDB.SetConnMaxLifetime(time.Minute * 5)
+
+	// Set max idle time
+	// sqlDB.SetConnMaxIdleTime(time.Minute * 5)
+
+	// Ping the database
+	err = sqlDB.Ping()
+	if err != nil {
+		LogInfoErr("settingDB", err.Error())
+		log.Fatalf("Error pinging database: %v", err)
+	}
+
+	fmt.Println("Connected to database successfully")
 }
